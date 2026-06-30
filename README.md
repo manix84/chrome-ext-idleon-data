@@ -2,6 +2,8 @@
 
 A Chrome extension that allows for the downloading of API data in JSON format sent to the browser when Idleon is loaded. Short are the days of manually inputting your character's data into a spreadsheet.
 
+The extension now uses Manifest V3.
+
 # How to get
 
 1. Download the repository by clicking the green Code button on this page then click "Download ZIP"
@@ -16,6 +18,12 @@ Please note that I plan on making this extension available on the chrome web sto
 # How to use
 
 The extension is really easy to use once it is installed. Simply navigate to the legends of Idleon website (in Chrome of course) and click play. Once you are on the character selection screen you should be able to open the extension and a series of download/copy links should appear. Enjoy!
+
+The popup now also shows:
+
+1. Last time data was captured
+2. Better error icons for parse failures
+3. A "Clear Cached Data" button to reset stale captures
 
 The best use of this extension is the ability to copy data that can be easily pasted into the Idleon Calculator import spreadsheet. Doing so will allow you to min/max each of your character and view information the game normally doesn't give you. The spreadsheet is very powerful!
 
@@ -37,11 +45,12 @@ You can also create an issue right here in Github if you like. Simply create a n
 
 If you are having issues directly following an update to Idleon, chances are that I'm already working on the fix. Please be patient, but still feel free to message me or create a Github issue if you would like!
 
-If you use multiple accounts, you might need to play on a character, go back to the character selection screen, then reload the page before the extension will work. This occurs as there is a bug with switching accounts and save data in the game itself. 
+If you use multiple accounts, you might need to play on a character, go back to the character selection screen, then reload the page before the extension will work. This occurs as there is a bug with switching accounts and save data in the game itself.
 
 # "How can I help?"
 
 I put this project on Github for a reason! This is my first project with web development, so things are pretty sloppy in that area. If you think you can contribute in any way, please feel free to make a pull request. It would be much appreciated!
 
 # Special Thanks
+
 [Morta1](https://github.com/Morta1) - For overhauling the frontend to make it look **beautiful**!

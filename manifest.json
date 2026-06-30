@@ -1,27 +1,25 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Idleon-Api-Downloader",
-  "version": "0.2",
-
-  "browser_action": {
-    "default_popup": "index.html"
+  "version": "0.3",
+  "description": "Download and copy Idleon save data for tools and spreadsheets.",
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "Idleon API Downloader"
   },
-
-  "permissions": [
-    "activeTab",
-    "storage",
-    "tabs"
+  "permissions": ["storage"],
+  "host_permissions": ["*://*.legendsofidleon.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["*://*.legendsofidleon.com/*"],
+      "js": ["js/inject.js"],
+      "run_at": "document_idle"
+    }
   ],
-
-  "icons": {
-  },
-
-  "content_scripts": [{
-    "matches": ["*://*.legendsofidleon.com/*"],
-    "js": ["js/inject.js"],
-    "run_at": "document_idle"
-  }],
-
-  "web_accessible_resources": ["js/injected.js", "js/firebaseInjected.js"]
-
+  "web_accessible_resources": [
+    {
+      "resources": ["js/injected.js"],
+      "matches": ["*://*.legendsofidleon.com/*"]
+    }
+  ]
 }

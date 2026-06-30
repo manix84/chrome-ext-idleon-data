@@ -1,143 +1,212 @@
 updateAllButtons();
 chrome.storage.onChanged.addListener(function (changes, namespace) {
-    for (let [key, {
-        oldValue,
-        newValue
-    }] of Object.entries(changes)) {
-        if (newValue != null) { // when save data changes, re-parse clean json with new save data and update buttons
-            updateAllButtons();
-        }
-    }
+  if (namespace !== "local") {
+    return;
+  }
+  if (changes.data || changes.updatedAt) {
+    updateAllButtons();
+  }
+});
+
+document.getElementById("clearDataBtn").addEventListener("click", function () {
+  chrome.storage.local.set({ data: null, updatedAt: null }, function () {
+    document.getElementById("content").style.display = "none";
+    document.getElementById("loader").style.display = "block";
+    setStatus("Cached data cleared.");
+  });
 });
 
 function updateAllButtons() {
-    chrome.storage.local.get("data", function (result) {
-        if (result.data != null) {
-            // Once the raw JSON is obtained, parse all needed data
-            // then remove any buttons where the data fails to parse
-            const content = document.getElementById('content');
-            const loader = document.getElementById('loader');
-            content.style.display = 'block';
-            loader.style.display = 'none';
+  chrome.storage.local.get(["data", "updatedAt"], function (result) {
+    const rawJson = result.data;
+    const updatedAt = result.updatedAt;
+    const content = document.getElementById("content");
+    const loader = document.getElementById("loader");
 
-            // raw data
-            const rawJson = result.data;
-            const rawString = JSON.stringify(rawJson);
+    if (!rawJson) {
+      content.style.display = "none";
+      loader.style.display = "block";
+      setStatus("Open Idleon and reach character selection to capture data.");
+      return;
+    }
 
-            // custom clean json
-            const cleanJson = parseAnyData(parseData, rawJson);
-            const cleanString = JSON.stringify(cleanJson);
+    content.style.display = "block";
+    loader.style.display = "none";
+    if (updatedAt) {
+      setStatus("Last updated: " + new Date(updatedAt).toLocaleString());
+    } else {
+      setStatus("Data ready.");
+    }
 
-            //for looty spreadsheet
-            const lootyString = rawJson.saveData.Cards1.replace(/\"/g, "\\");
+    const rawString = safeStringify(rawJson);
+    const cleanJson = parseAnyData(parseData, rawJson);
+    const cleanString = safeStringify(cleanJson);
+    const lootyString = parseAnyData(function (data) {
+      return data.saveData.Cards1.replace(/\"/g, "\\");
+    }, rawJson);
+    const questsString = parseAnyData(function (data) {
+      return safeStringify(data.account.quests);
+    }, cleanJson);
+    const familyCsv = parseAnyData(getFamilyCsv, cleanJson);
+    const guildCsv = parseAnyData(getGuildCsv, cleanJson);
+    const guildExportCsvString = parseAnyData(guildExportCsv, cleanJson);
 
-            // for quests spreadsheet
-            var questsString = null;
-            if (cleanJson != null) {
-                questsString = JSON.stringify(cleanJson.account.quests);
-            }
+    const actions = [
+      { id: "rawCopyLink", data: rawString },
+      { id: "cleanJsonCopyLink", data: cleanString },
+      { id: "lootyCopyLink", data: lootyString },
+      { id: "questsCopyLink", data: questsString },
+      { id: "familyCopyLink", data: familyCsv },
+      { id: "guildCopyLink", data: guildCsv },
+      { id: "guildExportCsvCopyLink", data: guildExportCsvString },
+    ];
 
-            // for idleon calculator spreadsheet
-            const familyCsv = parseAnyData(getFamilyCsv, cleanJson);
-            const guildCsv = parseAnyData(getGuildCsv, cleanJson);
+    const characters = document.querySelectorAll(".characters > li > a");
+    for (let i = 0; i < 9; i++) {
+      const charData = parseAnyData(function () {
+        return getCharacterCsv(cleanJson, i);
+      }, cleanJson);
+      actions.push({ id: characters[i].id, data: charData });
+    }
 
-            // for guild spreadsheet
-            const guildExportCsvString = parseAnyData(guildExportCsv, cleanJson);
-
-            // // companion import data (coming soon! tm)
-            // const companionJson = companionParseData(cleanJson);
-            // const companionString = JSON.stringify(companionJson);
-
-            const buttons = [
-                { id: 'rawCopyLink', data: rawString },
-                { id: 'cleanJsonCopyLink', data: cleanString },
-                { id: 'lootyCopyLink', data: lootyString },
-                { id: 'questsCopyLink', data: questsString },
-                { id: 'familyCopyLink', data: familyCsv },
-                { id: 'guildCopyLink', data: guildCsv },
-                { id: 'guildExportCsvCopyLink', data: guildExportCsvString },
-            ];
-
-            // add each character button to buttons
-            for (let i = 0; i < 9; i++) {
-                const charData = getCharacterCsv(cleanJson, i);
-                const characters = document.querySelectorAll('.characters > li > a');
-                buttons.push({ id: characters[i].id, data: charData })
-            }
-
-            // only show buttons with non-empty data
-            buttons.forEach((buttonElement) => {
-                const button = document.getElementById(buttonElement.id);
-                const data = buttonElement.data;
-                if (data === null || data === undefined || data === "null") {
-                    console.info("Unable to display " + buttonElement.id + " probably due to a parsing error.");
-                    const img = document.createElement('img');
-                    img.src = 'assets/error.svg';
-                    img.alt = 'parsing error';
-                    button.appendChild(img);
-                    return;
-                }
-                button.addEventListener("click", function (e) {
-                    showTooltip(e, 'Copied!');
-                    copyTextToClipboard(buttonElement.data);
-                });
-            });
-
-            // TODO: RE-WRITE THIS FUNCTION
-            allowDownloadButton("rawDownloadLink", rawString, "rawData.json")
-            // allowDownloadButton("cleanJsonDownloadLink", cleanString, "cleanData.json");
-        }
+    actions.forEach(function (action) {
+      setCopyButtonState(action.id, action.data);
     });
+
+    setDownloadButtonState("rawDownloadLink", rawString, "rawData.json");
+    setDownloadButtonState(
+      "cleanJsonDownloadLink",
+      cleanString,
+      "cleanData.json"
+    );
+  });
+}
+
+function safeStringify(value) {
+  if (value === null || value === undefined) {
+    return null;
+  }
+  try {
+    return JSON.stringify(value);
+  } catch (e) {
+    console.error("Failed to stringify data.", e);
+    return null;
+  }
 }
 
 function parseAnyData(func, data) {
-    // try {
+  if (data === null || data === undefined) {
+    return null;
+  }
+  try {
     return func(data);
-    // } catch (e) {
-    // console.error("Unable to parse function. Error was: " + e);
-    // return null;
-    // }
+  } catch (e) {
+    console.error("Unable to parse function.", e);
+    return null;
+  }
 }
 
-function copyTextToClipboard(text) {
-    const el = document.createElement('textarea');
-    el.value = text;
-    // fix the stutter in the page when adding the new element to the page.
-    el.setAttribute('readonly', '');
-    el.style.position = 'absolute';
-    el.style.left = '-9999px';
-    document.body.appendChild(el);
-    el.select();
-    document.execCommand('copy');
-    document.body.removeChild(el);
+async function copyTextToClipboard(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+
+  const el = document.createElement("textarea");
+  el.value = text;
+  el.setAttribute("readonly", "");
+  el.style.position = "absolute";
+  el.style.left = "-9999px";
+  document.body.appendChild(el);
+  el.select();
+  document.execCommand("copy");
+  document.body.removeChild(el);
 }
 
-//TODO: RE-WRITE
-function allowDownloadButton(elementId, dataString, fileName) {
-    const downloadButton = document.getElementById(elementId);
-    const data = "text/json;charset=utf-8," + encodeURIComponent(dataString);
-    downloadButton.setAttribute('download', fileName);
-    downloadButton.setAttribute('href', 'data:' + data);
-    downloadButton.addEventListener('click', function (e) {
-        showTooltip(e, 'Downloaded!');
-    });
+function setCopyButtonState(elementId, data) {
+  const button = document.getElementById(elementId);
+  if (!button) {
+    return;
+  }
+
+  const invalid =
+    data === null || data === undefined || data === "null" || data === "";
+  button.classList.toggle("disabled", invalid);
+
+  const icon = button.querySelector("img");
+  if (icon) {
+    icon.src = invalid ? "assets/error.svg" : "assets/copy.svg";
+    icon.alt = invalid ? "parsing error" : "copy";
+  }
+
+  button.onclick = invalid
+    ? null
+    : function (e) {
+        copyTextToClipboard(data)
+          .then(function () {
+            showTooltip(e, "Copied!");
+          })
+          .catch(function () {
+            showTooltip(e, "Copy failed");
+          });
+      };
+}
+
+function setDownloadButtonState(elementId, dataString, fileName) {
+  const downloadButton = document.getElementById(elementId);
+  if (!downloadButton) {
+    return;
+  }
+
+  const invalid =
+    dataString === null ||
+    dataString === undefined ||
+    dataString === "null" ||
+    dataString === "";
+  downloadButton.classList.toggle("disabled", invalid);
+
+  const icon = downloadButton.querySelector("img");
+  if (icon) {
+    icon.src = invalid ? "assets/error.svg" : "assets/download.svg";
+    icon.alt = invalid ? "parsing error" : "download";
+  }
+
+  if (invalid) {
+    downloadButton.removeAttribute("href");
+    downloadButton.removeAttribute("download");
+    downloadButton.onclick = null;
+    return;
+  }
+
+  const data = "text/json;charset=utf-8," + encodeURIComponent(dataString);
+  downloadButton.setAttribute("download", fileName);
+  downloadButton.setAttribute("href", "data:" + data);
+  downloadButton.onclick = function (e) {
+    showTooltip(e, "Downloaded!");
+  };
+}
+
+function setStatus(text) {
+  const status = document.getElementById("status");
+  status.innerText = text;
+  status.style.display = "block";
 }
 
 function showTooltip(e, text) {
-    const tooltip = document.getElementById('tooltip');
-    tooltip.innerText = text;
-    if (e.clientX + 80 > window.innerWidth) {
-        tooltip.style.top = e.clientY + 20 + 'px';
-        tooltip.style.left = e.clientX - 60 + 'px';
-    } else if (e.clientY + 50 > window.innerHeight) {
-        tooltip.style.top = e.clientY - 50 + 'px';
-        tooltip.style.left = e.clientX + 20 + 'px';
-    } else {
-        tooltip.style.top = e.clientY + 20 + 'px';
-        tooltip.style.left = e.clientX + 20 + 'px';
-    }
-    tooltip.style.display = 'block';
-    setTimeout(() => {
-        tooltip.style.display = 'none';
-    }, 1000)
+  const tooltip = document.getElementById("tooltip");
+  tooltip.innerText = text;
+  if (e.clientX + 80 > window.innerWidth) {
+    tooltip.style.top = e.clientY + 20 + "px";
+    tooltip.style.left = e.clientX - 60 + "px";
+  } else if (e.clientY + 50 > window.innerHeight) {
+    tooltip.style.top = e.clientY - 50 + "px";
+    tooltip.style.left = e.clientX + 20 + "px";
+  } else {
+    tooltip.style.top = e.clientY + 20 + "px";
+    tooltip.style.left = e.clientX + 20 + "px";
+  }
+  tooltip.style.display = "block";
+  setTimeout(() => {
+    tooltip.style.display = "none";
+  }, 1000);
 }
