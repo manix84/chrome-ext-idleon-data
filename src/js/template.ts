@@ -126,3 +126,5 @@ const templateData: UnknownRecord = {
 
     }
 }
+
+export { templateData };

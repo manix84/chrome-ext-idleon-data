@@ -1,4 +1,23 @@
 /// <reference path="../globals.d.ts" />
+import { templateData } from "./template";
+import { cardEquipMap } from "./maps/cardEquipMap";
+import { cardLevelMap } from "./maps/cardLevelMap";
+import { classIndexMap, classTalentMap, classTalentPageMap } from "./maps/classTalentMap";
+import { itemMap } from "./maps/itemMap";
+import {
+    cardSetMap,
+    charSubclassMap,
+    classNumberMap,
+    fishingBaitMap,
+    fishingLineMap,
+    largeBubbleMap,
+    obolNameMap,
+    skillIndexMap,
+    starSignMap
+} from "./maps/maps";
+import { mobMap } from "./maps/mobMap";
+import { talentMap } from "./maps/talentMap";
+
 /** Parses raw Idleon save data into the cleaner shape used by exports and integrations. */
 const parseData = (rawJson: RawIdleonData): CleanIdleonData  => {
     const r: CleanIdleonData = { account: {} as IdleonAccount, characters: [] };
@@ -672,3 +691,5 @@ const getAnyFieldValue = (field: unknown): unknown  => {
 const capitalize = (str: string): string  => {
     return str.charAt(0).toUpperCase() + str.slice(1);
 };
+
+export { parseData };

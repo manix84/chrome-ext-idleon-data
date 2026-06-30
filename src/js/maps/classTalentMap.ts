@@ -670,3 +670,5 @@ const classTalentPageMap: StringListMap = {
         "FILLER"
     ]
 };
+
+export { classIndexMap, classTalentMap, classTalentPageMap };

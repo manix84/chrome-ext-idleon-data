@@ -175,3 +175,5 @@ const mobMap: StringMap = {
     "shovelY": "Plasti_Doug",
     "crabcakeB": "Mr_Blueberry"
 }
+
+export { mobMap };

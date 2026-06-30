@@ -1,5 +1,6 @@
 import { cp, mkdir, rm } from "node:fs/promises";
 import { spawn } from "node:child_process";
+import * as esbuild from "esbuild";
 
 const extensionRoot = "dist/extension";
 const staticFiles = ["assets", "index.html", "manifest.json", "PRIVACY.md", "README.md"];
@@ -11,7 +12,20 @@ for (const file of staticFiles) {
   await cp(file, `${extensionRoot}/${file}`, { recursive: true });
 }
 
-await run("tsc", ["-p", "tsconfig.extension.json"]);
+await run("tsc", ["-p", "tsconfig.extension.json", "--noEmit"]);
+
+await esbuild.build({
+  bundle: true,
+  entryPoints: {
+    "js/inject": "src/js/inject.ts",
+    "js/injected": "src/js/injected.ts",
+    "js/popup": "src/js/popup.ts",
+  },
+  format: "iife",
+  outdir: extensionRoot,
+  platform: "browser",
+  target: "es2022",
+});
 
 console.log(`Built ${extensionRoot}`);
 

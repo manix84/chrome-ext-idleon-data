@@ -115,3 +115,5 @@ const cardEquipMap: StringMap = {
     "shovelY": "Plasti Doug TODO",
     "crabcakeB": "Mr Blueberry TODO"
 };
+
+export { cardEquipMap };

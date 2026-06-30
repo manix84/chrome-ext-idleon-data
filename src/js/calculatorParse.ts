@@ -516,3 +516,5 @@ const createCharacterList = (character: IdleonCharacter): CsvList  => {
 
     return list;
 };
+
+export { getCharacterCsv, getFamilyCsv, getGuildCsv };

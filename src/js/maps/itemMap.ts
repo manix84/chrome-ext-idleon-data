@@ -1074,3 +1074,5 @@ const itemMap: StringMap = {
     "GemQ8": "Infinite_Forge",
     "Mayo": "Maynaise_Bottle"
 }
+
+export { itemMap };

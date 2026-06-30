@@ -36,7 +36,7 @@ After changing extension files, run:
 npm run build
 ```
 
-This compiles the TypeScript files into `dist/extension/js` and copies the static extension files into `dist/extension`.
+This type-checks the TypeScript source, bundles the module entrypoints into `dist/extension/js`, and copies the static extension files into `dist/extension`.
 
 To validate the compiled extension package, run:
 

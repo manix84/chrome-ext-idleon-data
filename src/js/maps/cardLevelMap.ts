@@ -116,3 +116,5 @@ const cardLevelMap: NumberMap = {
 
     "Blank": 0
 }
+
+export { cardLevelMap };

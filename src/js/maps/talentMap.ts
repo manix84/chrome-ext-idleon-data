@@ -683,3 +683,5 @@ const talentMap: StringMap = {
     679: "_"
 
 };
+
+export { talentMap };

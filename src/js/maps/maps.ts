@@ -354,3 +354,5 @@ const largeBubbleMap: StringMap = {
     "c8": "Grind_Time",
     "c3": "Level_Up_Gift"
 }
+
+export { cardSetMap, charSubclassMap, classNumberMap, fishingBaitMap, fishingLineMap, largeBubbleMap, obolNameMap, skillIndexMap, starSignMap };
