@@ -44,30 +44,31 @@ const parseData = (rawJson: RawIdleonData): CleanIdleonData  => {
     r.account = fillAccountData(templateData.account as IdleonAccount, r.characters, fields);
 
     // currently left out of fillAccountData as it needs rawJson.guildInfo
-    r.account.guild = fillGuildData(fields, rawJson.guildInfo) as IdleonAccount["guild"];
+    r.account.guild = fillGuildData(fields, rawJson.guildInfo);
 
 
     return r;
 };
 
-const fillGuildData = (fields: IdleonFields, guildInfo: GuildInfo): UnknownRecord  => {
-    const r: UnknownRecord = {};
-    r.memberInfo = fillGuildMemberData(guildInfo);
-    r.bonuses = JSON.parse(String(fields.Guild))[0];
-
-    return r;
+const fillGuildData = (fields: IdleonFields, guildInfo: GuildInfo): IdleonAccount["guild"]  => {
+    const rawGuildBonuses = parseJsonField<CsvList[]>(fields.Guild);
+    return {
+        bonuses: rawGuildBonuses[0],
+        memberInfo: fillGuildMemberData(guildInfo)
+    };
 };
 
-const fillGuildMemberData = (guildInfo: GuildInfo): UnknownRecord[]  => {
-    const keys = Object.keys(guildInfo);
-    const cleanMembers: UnknownRecord[] = [];
-    for (let i = 0; i < keys.length; i++) {
-        const member = guildInfo[keys[i]] as UnknownRecord;
+const fillGuildMemberData = (guildInfo: GuildInfo): GuildMember[]  => {
+    const guildEntries = Object.entries(guildInfo);
+    const cleanMembers: GuildMember[] = [];
+    for (let i = 0; i < guildEntries.length; i++) {
+        const accountId = guildEntries[i][0];
+        const member = guildEntries[i][1];
         cleanMembers.push({
             "name": member["a"],
             "level": member["d"],
             "guildPoints": member["e"],
-            "accountId": keys[i],
+            "accountId": accountId,
             "class": mapLookup(classNumberMap, String(member["c"])),
             "rank": member["g"],
             "wantedPerk": member["f"]

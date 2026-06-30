@@ -87,7 +87,15 @@ type NumberMap = Record<string | number, number>;
 type StringListMap = Record<string, string[]>;
 type IndexedRecord<T> = Record<string | number, T> | T[];
 type IdleonFields = DynamicRecord;
-type GuildInfo = Record<string, DynamicRecord>;
+interface RawGuildMember extends DynamicRecord {
+  a?: unknown;
+  c?: unknown;
+  d?: unknown;
+  e?: unknown;
+  f?: unknown;
+  g?: unknown;
+}
+type GuildInfo = Record<string, RawGuildMember>;
 
 interface RawIdleonData extends UnknownRecord {
   saveData: IdleonFields;
