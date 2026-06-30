@@ -31,8 +31,36 @@ interface FirebaseDatabase {
   collection(name: string): FirebaseCollectionReference;
 }
 
+interface FirebaseAuthUser {
+  uid: string;
+}
+
+interface FirebaseAuth {
+  currentUser: FirebaseAuthUser | null;
+}
+
+interface FirebaseDataSnapshot {
+  val(): unknown;
+}
+
+interface FirebaseRealtimeReference {
+  child(path: string): FirebaseRealtimeReference;
+  once(eventName: "value"): Promise<FirebaseDataSnapshot>;
+}
+
+interface FirebaseRealtimeDatabase {
+  ref(): FirebaseRealtimeReference;
+}
+
+interface FirebaseNamespace {
+  auth(): FirebaseAuth;
+  database(): FirebaseRealtimeDatabase;
+  firestore(): FirebaseDatabase;
+}
+
 declare const chrome: ChromeApi;
 
+declare const firebase: FirebaseNamespace;
 declare const v: string[];
 declare const d: FirebaseDatabase;
 declare const l: string;

@@ -1,9 +1,21 @@
 {
   "manifest_version": 3,
   "name": "Idleon-Api-Downloader",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Download and copy Idleon save data for tools and spreadsheets.",
+  "icons": {
+    "16": "assets/icons/icon-16.png",
+    "32": "assets/icons/icon-32.png",
+    "48": "assets/icons/icon-48.png",
+    "128": "assets/icons/icon-128.png"
+  },
   "action": {
+    "default_icon": {
+      "16": "assets/icons/icon-16.png",
+      "32": "assets/icons/icon-32.png",
+      "48": "assets/icons/icon-48.png",
+      "128": "assets/icons/icon-128.png"
+    },
     "default_popup": "index.html",
     "default_title": "Idleon API Downloader"
   },

@@ -31,6 +31,106 @@ const getIdleonGlobal = (key: string): unknown => {
     return (globalThis as UnknownRecord)[key];
 };
 
+const getStringValue = (value: unknown): string | null => {
+    if (typeof value === "string" && value.length > 0) {
+        return value;
+    }
+
+    return null;
+};
+
+const isFirestoreDatabase = (value: unknown): value is FirebaseDatabase => {
+    return typeof value === "object" &&
+        value !== null &&
+        typeof (value as { collection?: unknown }).collection === "function";
+};
+
+const getFirebaseNamespace = (): FirebaseNamespace | null => {
+    const firebaseValue = getIdleonGlobal("firebase");
+    if (typeof firebaseValue !== "object" || firebaseValue === null) {
+        return null;
+    }
+
+    const candidate = firebaseValue as Partial<FirebaseNamespace>;
+    if (
+        typeof candidate.auth === "function" &&
+        typeof candidate.database === "function" &&
+        typeof candidate.firestore === "function"
+    ) {
+        return candidate as FirebaseNamespace;
+    }
+
+    return null;
+};
+
+const getFirestoreDatabase = (): FirebaseDatabase | null => {
+    const globalDatabase = getIdleonGlobal("d");
+    if (isFirestoreDatabase(globalDatabase)) {
+        return globalDatabase;
+    }
+
+    const firebaseNamespace = getFirebaseNamespace();
+    if (!firebaseNamespace) {
+        return null;
+    }
+
+    try {
+        return firebaseNamespace.firestore();
+    } catch (error: unknown) {
+        logError("Failed to read Firestore from Firebase namespace.", error);
+        return null;
+    }
+};
+
+const getUserId = (): string | null => {
+    const globalUserId = getStringValue(getIdleonGlobal("l"));
+    if (globalUserId) {
+        return globalUserId;
+    }
+
+    const firebaseNamespace = getFirebaseNamespace();
+    if (!firebaseNamespace) {
+        return null;
+    }
+
+    try {
+        return getStringValue(firebaseNamespace.auth().currentUser?.uid);
+    } catch (error: unknown) {
+        logError("Failed to read current Firebase auth user.", error);
+        return null;
+    }
+};
+
+const getGuildId = async (userId: string | null): Promise<string | null> => {
+    const globalGuildId = getStringValue(getIdleonGlobal("ae"));
+    if (globalGuildId) {
+        return globalGuildId;
+    }
+
+    if (!userId) {
+        return null;
+    }
+
+    const firebaseNamespace = getFirebaseNamespace();
+    if (!firebaseNamespace) {
+        return null;
+    }
+
+    try {
+        const snapshot = await firebaseNamespace
+            .database()
+            .ref()
+            .child("_usgu")
+            .child(userId)
+            .child("g")
+            .once("value");
+        return getStringValue(snapshot.val());
+    } catch (error: unknown) {
+        logError("Failed to read guild id from Firebase realtime database.", error);
+        return null;
+    }
+};
+
 const getMissingKeys = (external: UnknownRecord): string[] => {
     return Object.keys(external).filter((key) => external[key] === null || external[key] === undefined);
 };
@@ -60,11 +160,13 @@ const queryFirebaseWithRetry = async (): Promise<void> => {
 
         //grab globally accessable variables from other scripts (mainly Z.js and firebase.js)
         //it is configured this way to be easy to change when the minified variable names possibly change
+        const userId = getUserId();
+        const guildId = await getGuildId(userId);
         const external: UnknownRecord = {
             usernameList: getIdleonGlobal("v"),
-            database: getIdleonGlobal("d"),
-            userId: getIdleonGlobal("l"),
-            guildId: getIdleonGlobal("ae")
+            database: getFirestoreDatabase(),
+            userId,
+            guildId,
         }
         //verify all variables have been obtained
         const missingKeys = getMissingKeys(external);

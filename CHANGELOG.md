@@ -2,6 +2,13 @@
 
 Notable changes to this project are summarized here by released or package version.
 
+## [0.5.1] - 2026-06-30
+
+### Fixed
+
+- Fixed data capture after Idleon stopped exposing the previous minified `userId` and `guildId` globals.
+- Added fallbacks that resolve the signed-in user from Firebase auth and the current guild id from Firebase realtime database membership data.
+
 ## [0.5.0] - 2026-06-30
 
 ### Added
