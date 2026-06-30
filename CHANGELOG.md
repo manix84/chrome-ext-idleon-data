@@ -2,6 +2,13 @@
 
 Notable changes to this project are summarized here by released or package version.
 
+## [0.5.8] - 2026-06-30
+
+### Fixed
+
+- Added an in-popup parser error message so the first failing export shows its parser label and error text.
+- Made JSON field parsing tolerate raw Idleon values that are already parsed arrays or objects.
+
 ## [0.5.7] - 2026-06-30
 
 ### Fixed
