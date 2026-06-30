@@ -7,3 +7,4 @@ injected_electron.js
 node_modules/
 dist/
 coverage/
+examples/rawData.json

@@ -40,6 +40,7 @@ const updateAllButtons = (): void  => {
         missingKeys: captureStatus?.missingKeys,
       });
       setStatus(statusText);
+      setDataOverview(null);
       setParseErrorStatus([]);
       return;
     }
@@ -58,6 +59,7 @@ const updateAllButtons = (): void  => {
     const rawString = safeStringify(rawJson);
     const cleanJson = parseAnyData<RawIdleonData, CleanIdleonData>("cleanJson", parseData, rawJson as RawIdleonData, parseFailures);
     const cleanString = safeStringify(cleanJson);
+    setDataOverview(cleanJson);
     const lootyString = parseAnyData("lootyString", (data: RawIdleonData) => {
       return data.saveData.Cards1.replace(/"/g, "\\");
     }, rawJson as RawIdleonData, parseFailures);
@@ -263,6 +265,99 @@ const syncCharacterButtons = (characterCount: number): HTMLButtonElement[] => {
   }
 
   return buttons;
+};
+
+const setDataOverview = (cleanJson: CleanIdleonData | null): void => {
+  const overview = document.getElementById("dataOverview");
+  if (!overview) {
+    return;
+  }
+
+  if (cleanJson === null) {
+    overview.innerHTML = "";
+    overview.style.display = "none";
+    return;
+  }
+
+  const unknownClasses = getUnknownClasses(cleanJson.characters);
+  const overviewItems = [
+    { label: "Characters", value: String(cleanJson.characters.length) },
+    { label: "Highest level", value: String(getHighestCharacterLevel(cleanJson.characters)) },
+    { label: "Storage entries", value: String(cleanJson.account.chest.length) },
+    { label: "Cards tracked", value: String(Object.keys(cleanJson.account.cards).length) },
+    { label: "Looty items", value: String(getListLength(cleanJson.account.looty)) },
+    { label: "Guild members", value: String(cleanJson.account.guild.memberInfo.length) },
+  ];
+
+  overview.innerHTML = "";
+  const title = document.createElement("div");
+  const grid = document.createElement("div");
+  title.className = "overview-title";
+  title.innerText = "Detected Data";
+  grid.className = "overview-grid";
+
+  overviewItems.forEach((item) => {
+    const wrapper = document.createElement("div");
+    const label = document.createElement("span");
+    const value = document.createElement("span");
+
+    wrapper.className = "overview-item";
+    label.className = "overview-label";
+    value.className = "overview-value";
+    label.innerText = item.label;
+    value.innerText = item.value;
+
+    wrapper.appendChild(label);
+    wrapper.appendChild(value);
+    grid.appendChild(wrapper);
+  });
+
+  overview.appendChild(title);
+  overview.appendChild(grid);
+
+  if (unknownClasses.length > 0) {
+    const warning = document.createElement("div");
+    warning.className = "overview-warning";
+    warning.innerText = `Unknown class IDs detected: ${unknownClasses.join(", ")}. Map data should be updated for full talent exports.`;
+    overview.appendChild(warning);
+  }
+
+  overview.style.display = "block";
+};
+
+const getHighestCharacterLevel = (characters: IdleonCharacter[]): number => {
+  return characters.reduce((highestLevel, character) => {
+    const level = Number.parseInt(String(character.level), 10);
+    if (Number.isNaN(level)) {
+      return highestLevel;
+    }
+
+    return Math.max(highestLevel, level);
+  }, 0);
+};
+
+const getUnknownClasses = (characters: IdleonCharacter[]): string[] => {
+  const classes = new Set<string>();
+  characters.forEach((character) => {
+    const characterClass = String(character.class ?? "");
+    if (/^\d+$/.test(characterClass)) {
+      classes.add(characterClass);
+    }
+  });
+
+  return Array.from(classes);
+};
+
+const getListLength = (value: unknown): number => {
+  if (Array.isArray(value)) {
+    return value.length;
+  }
+
+  if (value !== null && typeof value === "object") {
+    return Object.keys(value).length;
+  }
+
+  return 0;
 };
 
 const setStatus = (text: string): void  => {

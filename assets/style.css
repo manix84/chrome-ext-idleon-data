@@ -71,6 +71,53 @@ body {
   display: none;
 }
 
+#dataOverview {
+  display: none;
+  margin: 12px 0;
+  padding: 10px;
+  border: 1px solid #3d4f62;
+  border-radius: 6px;
+  background: #18212b;
+}
+
+.overview-title {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.overview-item {
+  min-width: 0;
+}
+
+.overview-label {
+  display: block;
+  color: #aebdca;
+  font-size: 10px;
+}
+
+.overview-value {
+  display: block;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: bold;
+  overflow-wrap: anywhere;
+}
+
+.overview-warning {
+  margin-top: 8px;
+  color: #ffd8a8;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
 header {
   text-align: center;
   color: white;
