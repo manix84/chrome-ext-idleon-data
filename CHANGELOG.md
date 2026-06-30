@@ -2,6 +2,15 @@
 
 Notable changes to this project are summarized here by released or package version.
 
+## [0.5.2] - 2026-06-30
+
+### Added
+
+- Added a temporary suggested project icon.
+- Added the icon to the extension manifest and action icon configuration.
+- Added a transparent-background README icon preview.
+- Documented that the icon is temporary and should be replaced if the project owner chooses a better official icon.
+
 ## [0.5.1] - 2026-06-30
 
 ### Fixed

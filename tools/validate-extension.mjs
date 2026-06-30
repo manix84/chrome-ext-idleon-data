@@ -30,7 +30,8 @@ for (let i = 0; i < 9; i += 1) {
  *
  * @typedef {object} ExtensionManifest
  * @property {number} [manifest_version]
- * @property {{ default_popup?: string }} [action]
+ * @property {{ default_icon?: Record<string, string>, default_popup?: string }} [action]
+ * @property {Record<string, string>} [icons]
  * @property {string} [options_page]
  * @property {Array<{ js?: string[] }>} [content_scripts]
  * @property {Array<{ resources?: string[] }>} [web_accessible_resources]
@@ -85,6 +86,8 @@ async function validateManifest(context) {
 
   await requirePath(context, manifest.action?.default_popup, "manifest action popup");
   await requirePath(context, manifest.options_page, "manifest options page");
+  await requireIconPaths(context, manifest.icons, "manifest icon");
+  await requireIconPaths(context, manifest.action?.default_icon, "manifest action icon");
 
   for (const script of manifest.content_scripts ?? []) {
     for (const jsFile of script.js ?? []) {
@@ -96,6 +99,18 @@ async function validateManifest(context) {
     for (const resource of resourceGroup.resources ?? []) {
       await requirePath(context, resource, "web accessible resource");
     }
+  }
+}
+
+/**
+ * @param {ValidationContext} context
+ * @param {Record<string, string> | undefined} icons
+ * @param {string} label
+ * @returns {Promise<void>}
+ */
+async function requireIconPaths(context, icons, label) {
+  for (const iconPath of Object.values(icons ?? {})) {
+    await requirePath(context, iconPath, label);
   }
 }
 

@@ -50,6 +50,10 @@ async function createFixture(overrides = {}) {
   await writeFile(path.join(rootDir, "assets", "copy.svg"), "<svg></svg>");
   await writeFile(path.join(rootDir, "assets", "download.svg"), "<svg></svg>");
   await writeFile(path.join(rootDir, "assets", "options.css"), "");
+  await mkdir(path.join(rootDir, "assets", "icons"));
+  await writeFile(path.join(rootDir, "assets", "icons", "icon-16.png"), "");
+  await writeFile(path.join(rootDir, "assets", "icons", "icon-48.png"), "");
+  await writeFile(path.join(rootDir, "assets", "icons", "icon-128.png"), "");
   await writeFile(path.join(rootDir, "js", "inject.js"), "const injected = true;");
   await writeFile(path.join(rootDir, "js", "injected.js"), "const pageScript = true;");
   await writeFile(path.join(rootDir, "js", "options.js"), "const options = true;");
@@ -64,7 +68,17 @@ function baseManifest() {
     name: "Fixture",
     version: "0.0.0",
     action: {
+      default_icon: {
+        16: "assets/icons/icon-16.png",
+        48: "assets/icons/icon-48.png",
+        128: "assets/icons/icon-128.png",
+      },
       default_popup: "index.html",
+    },
+    icons: {
+      16: "assets/icons/icon-16.png",
+      48: "assets/icons/icon-48.png",
+      128: "assets/icons/icon-128.png",
     },
     options_page: "options.html",
     content_scripts: [

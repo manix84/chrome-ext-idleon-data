@@ -11,6 +11,12 @@
 [![Type Check](https://github.com/manix84/chrome-ext-idleon-data/actions/workflows/typecheck.yml/badge.svg)](https://github.com/manix84/chrome-ext-idleon-data/actions/workflows/typecheck.yml)
 [![Release](https://github.com/manix84/chrome-ext-idleon-data/actions/workflows/release.yml/badge.svg)](https://github.com/manix84/chrome-ext-idleon-data/actions/workflows/release.yml)
 
+<p align="center">
+  <img src="assets/icon-readme.svg" alt="Temporary suggested Idleon API Downloader icon" width="96" height="96">
+</p>
+
+> This icon is a temporary suggested project icon for this merge request. It is intentionally simple and should be replaced if the project owner chooses a better official icon.
+
 A Chrome extension that allows for the downloading of API data in JSON format sent to the browser when Idleon is loaded. Short are the days of manually inputting your character's data into a spreadsheet.
 
 The extension uses Manifest V3 and is now built from TypeScript source.
