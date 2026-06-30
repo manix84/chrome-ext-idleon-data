@@ -50,15 +50,19 @@ const parseData = (rawJson: RawIdleonData): CleanIdleonData  => {
     return r;
 };
 
-const fillGuildData = (fields: IdleonFields, guildInfo: GuildInfo): IdleonAccount["guild"]  => {
-    const rawGuildBonuses = parseJsonField<CsvList[]>(fields.Guild);
+const fillGuildData = (fields: IdleonFields, guildInfo: GuildInfo | null | undefined): IdleonAccount["guild"]  => {
+    const rawGuildBonuses = parseOptionalJsonField<CsvList[]>(fields.Guild, [[]]);
     return {
         bonuses: rawGuildBonuses[0],
         memberInfo: fillGuildMemberData(guildInfo)
     };
 };
 
-const fillGuildMemberData = (guildInfo: GuildInfo): GuildMember[]  => {
+const fillGuildMemberData = (guildInfo: GuildInfo | null | undefined): GuildMember[]  => {
+    if (guildInfo == null) {
+        return [];
+    }
+
     const guildEntries = Object.entries(guildInfo);
     const cleanMembers: GuildMember[] = [];
     for (let i = 0; i < guildEntries.length; i++) {
@@ -625,6 +629,18 @@ const parseIntMapFields = (map: DynamicRecord, _toInt = true): Record<string, nu
         r[key] = parseInt(map[key]);
     }
     return r;
+};
+
+const parseOptionalJsonField = <T>(value: unknown, fallback: T): T => {
+    if (value === null || value === undefined || value === "") {
+        return fallback;
+    }
+
+    try {
+        return parseJsonField<T>(value);
+    } catch {
+        return fallback;
+    }
 };
 
 // take two raw arrays and get the first (and only) mapped object from each element in the array and combine it with

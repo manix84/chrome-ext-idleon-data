@@ -49,17 +49,17 @@ const updateAllButtons = (): void  => {
     }
 
     const rawString = safeStringify(rawJson);
-    const cleanJson = parseAnyData<RawIdleonData, CleanIdleonData>(parseData, rawJson as RawIdleonData);
+    const cleanJson = parseAnyData<RawIdleonData, CleanIdleonData>("cleanJson", parseData, rawJson as RawIdleonData);
     const cleanString = safeStringify(cleanJson);
-    const lootyString = parseAnyData((data: RawIdleonData) => {
+    const lootyString = parseAnyData("lootyString", (data: RawIdleonData) => {
       return data.saveData.Cards1.replace(/"/g, "\\");
     }, rawJson as RawIdleonData);
-    const questsString = parseAnyData((data: CleanIdleonData) => {
+    const questsString = parseAnyData("questsString", (data: CleanIdleonData) => {
       return safeStringify(data.account.quests);
     }, cleanJson);
-    const familyCsv = parseAnyData(getFamilyCsv, cleanJson);
-    const guildCsv = parseAnyData(getGuildCsv, cleanJson);
-    const guildExportCsvString = parseAnyData(guildExportCsv, cleanJson);
+    const familyCsv = parseAnyData("familyCsv", getFamilyCsv, cleanJson);
+    const guildCsv = parseAnyData("guildCsv", getGuildCsv, cleanJson);
+    const guildExportCsvString = parseAnyData("guildExportCsv", guildExportCsv, cleanJson);
 
     const actions: ParsedAction[] = [
       { id: "rawCopyLink", data: rawString },
@@ -73,7 +73,7 @@ const updateAllButtons = (): void  => {
 
     const characters = document.querySelectorAll(".characters > li > button");
     for (let i = 0; i < 9; i++) {
-      const charData = parseAnyData(() => {
+      const charData = parseAnyData(`characterCsv:${i}`, () => {
         return getCharacterCsv(cleanJson, i);
       }, cleanJson);
       actions.push({ id: characters[i].id, data: charData });
@@ -109,14 +109,15 @@ const safeStringify = (value: unknown): string | null  => {
   }
 };
 
-const parseAnyData = <T, R>(func: (data: T) => R, data: T | null | undefined): R | null  => {
+const parseAnyData = <T, R>(label: string, func: (data: T) => R, data: T | null | undefined): R | null  => {
   if (data === null || data === undefined) {
+    logVerbose(`Skipping ${label}; source data is unavailable.`);
     return null;
   }
   try {
     return func(data);
   } catch (e) {
-    logError("Unable to parse function.", e);
+    logError(`Unable to parse ${label}.`, e);
     return null;
   }
 };
