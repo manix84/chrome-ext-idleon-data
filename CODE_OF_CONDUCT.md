@@ -1,6 +1,6 @@
 # Code of Conduct 🤝
 
-This project is owned and maintained as `Corbeno/Idleon-Api-Downloader`.
+This repository is intended to be merged back into the original Idleon API Downloader project.
 
 ## Expected Behavior ✅
 
@@ -16,4 +16,4 @@ Maintainers may edit, hide, or remove comments and contributions that do not mee
 
 ## Reporting 📣
 
-Report conduct concerns through the project's GitHub issue or discussion channels if appropriate. If the concern is sensitive, contact the maintainer through the public contact route listed by the `Corbeno/Idleon-Api-Downloader` repository owner.
+Report conduct concerns through the project's GitHub issue or discussion channels if appropriate.

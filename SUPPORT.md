@@ -1,6 +1,6 @@
 # Support 🧰
 
-This project is owned and maintained as `Corbeno/Idleon-Api-Downloader`.
+This repository is intended to be merged back into the original Idleon API Downloader project.
 
 ## Getting Help 🙋
 

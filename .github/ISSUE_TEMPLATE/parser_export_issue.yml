@@ -6,8 +6,6 @@ body:
   - type: markdown
     attributes:
       value: |
-        This project is owned and maintained as `Corbeno/Idleon-Api-Downloader`.
-
         Do not attach raw private save data publicly. Redact examples to the smallest non-sensitive field needed.
   - type: dropdown
     id: export_type

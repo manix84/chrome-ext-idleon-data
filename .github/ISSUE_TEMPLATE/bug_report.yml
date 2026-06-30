@@ -6,8 +6,6 @@ body:
   - type: markdown
     attributes:
       value: |
-        This project is owned and maintained as `Corbeno/Idleon-Api-Downloader`.
-
         Do not include private save data, account identifiers, tokens, or other sensitive information.
   - type: textarea
     id: summary

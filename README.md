@@ -1,14 +1,15 @@
 # Idleon-Api-Downloader 🎮
 
-[![Lint](actions/workflows/lint.yml/badge.svg)](actions/workflows/lint.yml)
-[![Tests](actions/workflows/test.yml/badge.svg)](actions/workflows/test.yml)
-[![Type Check](actions/workflows/typecheck.yml/badge.svg)](actions/workflows/typecheck.yml)
-[![Release](actions/workflows/release.yml/badge.svg)](actions/workflows/release.yml)
 ![Version](https://img.shields.io/badge/version-0.3.1-blue)
 [![Latest Release](https://img.shields.io/badge/release-GitHub-blue)](releases)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue)
 ![Manifest](https://img.shields.io/badge/Chrome%20Extension-Manifest%20V3-green)
 ![License](https://img.shields.io/badge/license-not%20declared-lightgrey)
+
+[![Lint](actions/workflows/lint.yml/badge.svg)](actions/workflows/lint.yml)
+[![Tests](actions/workflows/test.yml/badge.svg)](actions/workflows/test.yml)
+[![Type Check](actions/workflows/typecheck.yml/badge.svg)](actions/workflows/typecheck.yml)
+[![Release](actions/workflows/release.yml/badge.svg)](actions/workflows/release.yml)
 
 A Chrome extension that allows for the downloading of API data in JSON format sent to the browser when Idleon is loaded. Short are the days of manually inputting your character's data into a spreadsheet.
 
@@ -19,10 +20,10 @@ The extension uses Manifest V3 and is now built from TypeScript source.
 1. Go to the GitHub Releases page for this repository
 2. Download the packaged release zip
 3. Unzip the file to your location of choice (download folder works fine)
-3. Navigate to chrome://extensions in chrome browser
-4. Make sure "Developer mode" is checked at the top right of the screen
-5. Click "Load unpacked" then select the folder you unzipped
-6. You are good to go! You might want to pin the extension for ease of use in game
+4. Navigate to chrome://extensions in chrome browser
+5. Make sure "Developer mode" is checked at the top right of the screen
+6. Click "Load unpacked" then select the folder you unzipped
+7. You are good to go! You might want to pin the extension for ease of use in game
 
 Please note that I plan on making this extension available on the chrome web store.
 
@@ -105,11 +106,9 @@ See [PRIVACY.md](PRIVACY.md) for what the extension captures, where it is stored
 
 # Community 🤝
 
-This project is owned and maintained as [`Corbeno/Idleon-Api-Downloader`](https://github.com/Corbeno/Idleon-Api-Downloader).
-
 See [CONTRIBUTING.md](CONTRIBUTING.md), [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), [SECURITY.md](SECURITY.md), and [SUPPORT.md](SUPPORT.md) before opening issues or pull requests.
 
-No license has been declared for this repository at this time. Do not assume permission to reuse, redistribute, or relicense the code outside this project unless the owner adds a license or gives explicit permission.
+No license has been declared for this repository at this time. Do not assume permission to reuse, redistribute, or relicense the code outside this project unless a license is added or explicit permission is given.
 
 The best use of this extension is the ability to copy data that can be easily pasted into the Idleon Calculator import spreadsheet. Doing so will allow you to min/max each of your character and view information the game normally doesn't give you. The spreadsheet is very powerful!
 

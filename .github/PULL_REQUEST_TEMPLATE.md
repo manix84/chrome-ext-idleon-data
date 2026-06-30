@@ -10,4 +10,4 @@
 
 ## Notes 📌
 
-This project is owned and maintained as `Corbeno/Idleon-Api-Downloader`. No license has been declared for the repository at this time.
+No license has been declared for the repository at this time.

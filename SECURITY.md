@@ -1,6 +1,6 @@
 # Security Policy 🛡️
 
-This project is owned and maintained as `Corbeno/Idleon-Api-Downloader`.
+This repository is intended to be merged back into the original Idleon API Downloader project.
 
 ## Supported Versions ✅
 
@@ -10,7 +10,7 @@ Only the latest code and latest GitHub Release are considered supported.
 
 Please do not publicly post sensitive account data, save data, tokens, or exploit details in an issue.
 
-If you find a vulnerability, open a minimal GitHub issue that describes the affected area without exposing private data, or contact the maintainer through the public contact route listed by the `Corbeno/Idleon-Api-Downloader` repository owner.
+If you find a vulnerability, open a minimal GitHub issue that describes the affected area without exposing private data.
 
 Include:
 
