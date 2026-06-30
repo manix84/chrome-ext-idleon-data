@@ -48,7 +48,15 @@ const getCharacterRawField = (characterData: NormalizedCharacterRawData, fieldNa
 
 /** Parses a JSON-encoded Idleon field and returns the requested type. */
 const parseJsonField = <T>(value: unknown): T => {
-    return JSON.parse(String(value)) as T;
+    if (typeof value !== "string") {
+        if (value === null || value === undefined) {
+            throw new Error("Expected a JSON string or parsed JSON value.");
+        }
+
+        return value as T;
+    }
+
+    return JSON.parse(value) as T;
 };
 
 export {

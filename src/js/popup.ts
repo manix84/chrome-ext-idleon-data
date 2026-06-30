@@ -15,10 +15,16 @@ type ParsedAction = {
   data: string | null;
 };
 
+type ParseFailure = {
+  label: string;
+  message: string;
+};
+
 /** Reads cached save data and wires popup copy/download actions. */
 const updateAllButtons = (): void  => {
   logVerbose("Popup refresh requested.");
   chrome.storage.local.get(["data", "updatedAt", "captureStatus"], (result: UnknownRecord) => {
+    const parseFailures: ParseFailure[] = [];
     const rawJson = result.data;
     const updatedAt = result.updatedAt;
     const captureStatus = readCaptureStatus(result.captureStatus);
@@ -34,6 +40,7 @@ const updateAllButtons = (): void  => {
         missingKeys: captureStatus?.missingKeys,
       });
       setStatus(statusText);
+      setParseErrorStatus([]);
       return;
     }
 
@@ -49,17 +56,17 @@ const updateAllButtons = (): void  => {
     }
 
     const rawString = safeStringify(rawJson);
-    const cleanJson = parseAnyData<RawIdleonData, CleanIdleonData>("cleanJson", parseData, rawJson as RawIdleonData);
+    const cleanJson = parseAnyData<RawIdleonData, CleanIdleonData>("cleanJson", parseData, rawJson as RawIdleonData, parseFailures);
     const cleanString = safeStringify(cleanJson);
     const lootyString = parseAnyData("lootyString", (data: RawIdleonData) => {
       return data.saveData.Cards1.replace(/"/g, "\\");
-    }, rawJson as RawIdleonData);
+    }, rawJson as RawIdleonData, parseFailures);
     const questsString = parseAnyData("questsString", (data: CleanIdleonData) => {
       return safeStringify(data.account.quests);
-    }, cleanJson);
-    const familyCsv = parseAnyData("familyCsv", getFamilyCsv, cleanJson);
-    const guildCsv = parseAnyData("guildCsv", getGuildCsv, cleanJson);
-    const guildExportCsvString = parseAnyData("guildExportCsv", guildExportCsv, cleanJson);
+    }, cleanJson, parseFailures);
+    const familyCsv = parseAnyData("familyCsv", getFamilyCsv, cleanJson, parseFailures);
+    const guildCsv = parseAnyData("guildCsv", getGuildCsv, cleanJson, parseFailures);
+    const guildExportCsvString = parseAnyData("guildExportCsv", guildExportCsv, cleanJson, parseFailures);
 
     const actions: ParsedAction[] = [
       { id: "rawCopyLink", data: rawString },
@@ -75,7 +82,7 @@ const updateAllButtons = (): void  => {
     for (let i = 0; i < 9; i++) {
       const charData = parseAnyData(`characterCsv:${i}`, () => {
         return getCharacterCsv(cleanJson, i);
-      }, cleanJson);
+      }, cleanJson, parseFailures);
       actions.push({ id: characters[i].id, data: charData });
     }
 
@@ -89,6 +96,7 @@ const updateAllButtons = (): void  => {
       cleanString,
       "cleanData.json"
     );
+    setParseErrorStatus(parseFailures);
   });
 };
 
@@ -109,7 +117,7 @@ const safeStringify = (value: unknown): string | null  => {
   }
 };
 
-const parseAnyData = <T, R>(label: string, func: (data: T) => R, data: T | null | undefined): R | null  => {
+const parseAnyData = <T, R>(label: string, func: (data: T) => R, data: T | null | undefined, parseFailures: ParseFailure[]): R | null  => {
   if (data === null || data === undefined) {
     logVerbose(`Skipping ${label}; source data is unavailable.`);
     return null;
@@ -118,8 +126,20 @@ const parseAnyData = <T, R>(label: string, func: (data: T) => R, data: T | null 
     return func(data);
   } catch (e) {
     logError(`Unable to parse ${label}.`, e);
+    parseFailures.push({
+      label,
+      message: getErrorMessage(e)
+    });
     return null;
   }
+};
+
+const getErrorMessage = (error: unknown): string => {
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return String(error);
 };
 
 const copyTextToClipboard = async (text: string): Promise<void> => {
@@ -212,6 +232,23 @@ const setDownloadButtonState = (elementId: string, dataString: string | null, fi
 const setStatus = (text: string): void  => {
   const status = document.getElementById("status");
   status.innerText = text;
+  status.style.display = "block";
+};
+
+const setParseErrorStatus = (parseFailures: ParseFailure[]): void => {
+  const status = document.getElementById("parseErrorStatus");
+  if (!status) {
+    return;
+  }
+
+  if (parseFailures.length === 0) {
+    status.innerText = "";
+    status.style.display = "none";
+    return;
+  }
+
+  const firstFailure = parseFailures[0];
+  status.innerText = `Parser error in ${firstFailure.label}: ${firstFailure.message}`;
   status.style.display = "block";
 };
 
