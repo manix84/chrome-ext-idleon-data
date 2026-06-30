@@ -36,6 +36,26 @@ The popup now also shows:
 1. Last time data was captured
 2. Better error icons for parse failures
 3. A "Clear Cached Data" button to reset stale captures
+4. Capture progress messages when the extension is still waiting for Idleon data
+
+## Options and Debug Logging 🧭
+
+Debug logging is off by default for regular users. Errors are always written to the browser console.
+
+To change the debug level, open the extension options page from Chrome's extension management screen:
+
+1. Navigate to `chrome://extensions`
+2. Find Idleon API Downloader
+3. Click "Details"
+4. Click "Extension options"
+
+The options page supports:
+
+1. `Off` - only errors are logged
+2. `Info` - important capture, parsing, copy, and download milestones are logged
+3. `Verbose` - detailed capture polling and storage-change diagnostics are logged
+
+Use `Info` or `Verbose` when reporting capture problems, especially if the popup is still waiting for Idleon data. The logs are prefixed with `Idleon API Downloader` and avoid printing raw save payloads.
 
 # Development 🛠️
 
@@ -84,7 +104,7 @@ npm test
 npm run validate
 ```
 
-`npm run validate` builds the compiled extension package and checks the manifest, popup asset references, required popup control IDs, and JavaScript syntax for the files loaded by the extension.
+`npm run validate` builds the compiled extension package and checks the manifest, popup and options page asset references, required popup control IDs, and JavaScript syntax for the files loaded by the extension.
 
 To run only the release package validation locally:
 

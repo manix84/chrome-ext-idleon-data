@@ -35,7 +35,7 @@ test("reports JavaScript syntax errors", async () => {
 });
 
 /**
- * @param {{ indexHtml?: string, popupJs?: string }} [overrides]
+ * @param {{ indexHtml?: string, optionsHtml?: string, popupJs?: string }} [overrides]
  * @returns {Promise<string>}
  */
 async function createFixture(overrides = {}) {
@@ -46,10 +46,13 @@ async function createFixture(overrides = {}) {
 
   await writeFile(path.join(rootDir, "manifest.json"), JSON.stringify(baseManifest(), null, 2));
   await writeFile(path.join(rootDir, "index.html"), overrides.indexHtml ?? baseIndexHtml());
+  await writeFile(path.join(rootDir, "options.html"), overrides.optionsHtml ?? baseOptionsHtml());
   await writeFile(path.join(rootDir, "assets", "copy.svg"), "<svg></svg>");
   await writeFile(path.join(rootDir, "assets", "download.svg"), "<svg></svg>");
+  await writeFile(path.join(rootDir, "assets", "options.css"), "");
   await writeFile(path.join(rootDir, "js", "inject.js"), "const injected = true;");
   await writeFile(path.join(rootDir, "js", "injected.js"), "const pageScript = true;");
+  await writeFile(path.join(rootDir, "js", "options.js"), "const options = true;");
   await writeFile(path.join(rootDir, "js", "popup.js"), overrides.popupJs ?? "const popup = true;");
 
   return rootDir;
@@ -63,6 +66,7 @@ function baseManifest() {
     action: {
       default_popup: "index.html",
     },
+    options_page: "options.html",
     content_scripts: [
       {
         matches: ["*://example.com/*"],
@@ -76,6 +80,20 @@ function baseManifest() {
       },
     ],
   };
+}
+
+function baseOptionsHtml() {
+  return `
+    <!doctype html>
+    <html>
+      <head>
+        <link rel="stylesheet" href="assets/options.css">
+      </head>
+      <body>
+        <script src="js/options.js"></script>
+      </body>
+    </html>
+  `;
 }
 
 function baseIndexHtml() {

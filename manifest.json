@@ -1,12 +1,13 @@
 {
   "manifest_version": 3,
   "name": "Idleon-Api-Downloader",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Download and copy Idleon save data for tools and spreadsheets.",
   "action": {
     "default_popup": "index.html",
     "default_title": "Idleon API Downloader"
   },
+  "options_page": "options.html",
   "permissions": [
     "storage"
   ],

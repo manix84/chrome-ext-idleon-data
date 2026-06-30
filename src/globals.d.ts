@@ -169,6 +169,44 @@ interface CleanIdleonData extends UnknownRecord {
   characters: IdleonCharacter[];
 }
 
+type CaptureStatusStage =
+  | "content-script-loaded"
+  | "injected-script-loading"
+  | "injected-script-loaded"
+  | "firebase-polling"
+  | "firebase-globals-found"
+  | "char-names-captured"
+  | "save-data-requested"
+  | "save-data-captured"
+  | "guild-info-requested"
+  | "guild-info-captured"
+  | "partial-data"
+  | "data-ready"
+  | "timeout"
+  | "error"
+  | "cache-cleared";
+
+type DebugLogLevel = "off" | "info" | "verbose";
+
+interface CaptureStatus extends UnknownRecord {
+  stage: CaptureStatusStage;
+  message: string;
+  updatedAt: number;
+  attempt?: number;
+  missingKeys?: string[];
+  receivedKeys?: string[];
+  errorMessage?: string;
+}
+
+interface CaptureStatusUpdate extends UnknownRecord {
+  stage: CaptureStatusStage;
+  message: string;
+  attempt?: number;
+  missingKeys?: string[];
+  receivedKeys?: string[];
+  errorMessage?: string;
+}
+
 interface JSON {
   parse(text: unknown, reviver?: (this: unknown, key: string, value: unknown) => unknown): DynamicValue;
   parse(text: DynamicValue, reviver?: (this: unknown, key: string, value: unknown) => unknown): DynamicValue;

@@ -1,0 +1,75 @@
+body {
+  margin: 0;
+  background: #171717;
+  color: #f4f4f4;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+}
+
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 20px;
+}
+
+h1 {
+  margin: 0 0 24px;
+  font-size: 28px;
+}
+
+h2 {
+  margin: 0 0 16px;
+  font-size: 20px;
+}
+
+section {
+  border: 1px solid #3a3a3a;
+  border-radius: 8px;
+  padding: 20px;
+  background: #202020;
+}
+
+fieldset {
+  display: flex;
+  gap: 12px;
+  margin: 0 0 16px;
+  padding: 0;
+  border: 0;
+}
+
+legend {
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid #4a4a4a;
+  border-radius: 8px;
+  background: #282828;
+  cursor: pointer;
+}
+
+label:has(input:checked) {
+  border-color: #7fb7ff;
+  background: #243247;
+}
+
+#debugDescription,
+.note,
+#status {
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.note {
+  color: #cfcfcf;
+}
+
+#status {
+  min-height: 20px;
+  margin-top: 12px;
+  color: #9ad49a;
+}

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Idleon API Downloader Options</title>
+    <link rel="stylesheet" href="assets/options.css" />
+  </head>
+
+  <body>
+    <main>
+      <header>
+        <h1>Idleon API Downloader Options</h1>
+      </header>
+
+      <section aria-labelledby="debug-heading">
+        <h2 id="debug-heading">Debug Logging</h2>
+        <fieldset>
+          <legend>Logging level</legend>
+          <label>
+            <input type="radio" name="debugLevel" value="off" />
+            Off
+          </label>
+          <label>
+            <input type="radio" name="debugLevel" value="info" />
+            Info
+          </label>
+          <label>
+            <input type="radio" name="debugLevel" value="verbose" />
+            Verbose
+          </label>
+        </fieldset>
+        <p id="debugDescription"></p>
+        <p class="note">Errors are always logged.</p>
+        <div id="status" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <script src="js/options.js" type="text/javascript"></script>
+  </body>
+</html>

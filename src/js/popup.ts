@@ -1,5 +1,12 @@
 /// <reference path="../globals.d.ts" />
 import { getCharacterCsv, getFamilyCsv, getGuildCsv } from "./calculatorParse";
+import {
+  DEBUG_LEVEL_STORAGE_KEY,
+  logError,
+  logInfo,
+  logVerbose,
+  setDebugLevel,
+} from "./debug";
 import { guildExportCsv } from "./guildParse";
 import { parseData } from "./parse";
 
@@ -10,19 +17,29 @@ type ParsedAction = {
 
 /** Reads cached save data and wires popup copy/download actions. */
 const updateAllButtons = (): void  => {
-  chrome.storage.local.get(["data", "updatedAt"], (result: UnknownRecord) => {
+  logVerbose("Popup refresh requested.");
+  chrome.storage.local.get(["data", "updatedAt", "captureStatus"], (result: UnknownRecord) => {
     const rawJson = result.data;
     const updatedAt = result.updatedAt;
+    const captureStatus = readCaptureStatus(result.captureStatus);
     const content = document.getElementById("content");
     const loader = document.getElementById("loader");
 
     if (!rawJson) {
       content.style.display = "none";
       loader.style.display = "block";
-      setStatus("Open Idleon and reach character selection to capture data.");
+      const statusText = getWaitingStatusText(captureStatus);
+      logVerbose("No cached Idleon data available for popup.", {
+        stage: captureStatus?.stage,
+        missingKeys: captureStatus?.missingKeys,
+      });
+      setStatus(statusText);
       return;
     }
 
+    logInfo("Cached Idleon data found. Preparing export actions.", {
+      updatedAt: updatedAt === undefined ? undefined : String(updatedAt),
+    });
     content.style.display = "block";
     loader.style.display = "none";
     if (updatedAt) {
@@ -75,6 +92,11 @@ const updateAllButtons = (): void  => {
   });
 };
 
+chrome.storage.local.get(DEBUG_LEVEL_STORAGE_KEY, (result: UnknownRecord) => {
+  setDebugLevel(result[DEBUG_LEVEL_STORAGE_KEY]);
+  updateAllButtons();
+});
+
 const safeStringify = (value: unknown): string | null  => {
   if (value === null || value === undefined) {
     return null;
@@ -82,7 +104,7 @@ const safeStringify = (value: unknown): string | null  => {
   try {
     return JSON.stringify(value);
   } catch (e) {
-    console.error("Failed to stringify data.", e);
+    logError("Failed to stringify data.", e);
     return null;
   }
 };
@@ -94,7 +116,7 @@ const parseAnyData = <T, R>(func: (data: T) => R, data: T | null | undefined): R
   try {
     return func(data);
   } catch (e) {
-    console.error("Unable to parse function.", e);
+    logError("Unable to parse function.", e);
     return null;
   }
 };
@@ -137,11 +159,14 @@ const setCopyButtonState = (elementId: string, data: string | null): void  => {
   button.onclick = invalid
     ? null
     : (e) => {
+        logInfo(`Copy requested for ${elementId}.`);
         copyTextToClipboard(data)
           .then(() => {
+            logInfo(`Copy completed for ${elementId}.`);
             showTooltip(e, "Copied!");
           })
-          .catch(() => {
+          .catch((error: unknown) => {
+            logError(`Copy failed for ${elementId}.`, error);
             showTooltip(e, "Copy failed");
           });
       };
@@ -178,6 +203,7 @@ const setDownloadButtonState = (elementId: string, dataString: string | null, fi
   downloadButton.setAttribute("download", fileName);
   downloadButton.setAttribute("href", "data:" + data);
   downloadButton.onclick = (e) => {
+    logInfo(`Download requested for ${elementId}.`, { fileName });
     showTooltip(e, "Downloaded!");
   };
 };
@@ -186,6 +212,39 @@ const setStatus = (text: string): void  => {
   const status = document.getElementById("status");
   status.innerText = text;
   status.style.display = "block";
+};
+
+const readCaptureStatus = (value: unknown): CaptureStatus | null => {
+  if (value === null || value === undefined || typeof value !== "object") {
+    return null;
+  }
+
+  const record = value as UnknownRecord;
+  if (typeof record.stage !== "string" || typeof record.message !== "string") {
+    return null;
+  }
+
+  return value as CaptureStatus;
+};
+
+const getWaitingStatusText = (captureStatus: CaptureStatus | null): string => {
+  if (!captureStatus) {
+    return "Open Idleon and reach character selection to capture data. No capture status has been received yet.";
+  }
+
+  const ageSeconds = Math.max(0, Math.round((Date.now() - captureStatus.updatedAt) / 1000));
+  const ageText = ageSeconds <= 1 ? "just now" : `${ageSeconds}s ago`;
+  const missingText = captureStatus.missingKeys && captureStatus.missingKeys.length > 0
+    ? ` Missing: ${captureStatus.missingKeys.join(", ")}.`
+    : "";
+  const attemptText = captureStatus.attempt === undefined
+    ? ""
+    : ` Attempt ${captureStatus.attempt}.`;
+  const errorText = captureStatus.errorMessage
+    ? ` ${captureStatus.errorMessage}`
+    : "";
+
+  return `${captureStatus.message}${missingText}${attemptText} Updated ${ageText}.${errorText}`;
 };
 
 const showTooltip = (e: MouseEvent, text: string): void  => {
@@ -207,17 +266,24 @@ const showTooltip = (e: MouseEvent, text: string): void  => {
   }, 1000);
 };
 
-updateAllButtons();
 chrome.storage.onChanged.addListener((changes: UnknownRecord, namespace: string) => {
   if (namespace !== "local") {
     return;
   }
-  if (changes.data || changes.updatedAt) {
+  const debugLevelChange = changes[DEBUG_LEVEL_STORAGE_KEY] as { newValue?: unknown } | undefined;
+  if (debugLevelChange) {
+    setDebugLevel(debugLevelChange.newValue);
+  }
+  if (changes.data || changes.updatedAt || changes.captureStatus) {
+    logVerbose("Popup observed local storage change.", {
+      keys: Object.keys(changes).join(", "),
+    });
     updateAllButtons();
   }
 });
 
 document.getElementById("clearDataBtn").addEventListener("click", () => {
+  logInfo("Clearing cached Idleon data.");
   chrome.storage.local.set(
     {
       data: null,
@@ -225,6 +291,11 @@ document.getElementById("clearDataBtn").addEventListener("click", () => {
       saveData: null,
       charNameData: null,
       guildInfo: null,
+      captureStatus: {
+        stage: "cache-cleared",
+        message: "Cached data cleared. Waiting for new Idleon data.",
+        updatedAt: Date.now(),
+      } satisfies CaptureStatus,
     },
     () => {
       document.getElementById("content").style.display = "none";

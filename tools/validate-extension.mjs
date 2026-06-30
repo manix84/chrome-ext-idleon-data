@@ -31,6 +31,7 @@ for (let i = 0; i < 9; i += 1) {
  * @typedef {object} ExtensionManifest
  * @property {number} [manifest_version]
  * @property {{ default_popup?: string }} [action]
+ * @property {string} [options_page]
  * @property {Array<{ js?: string[] }>} [content_scripts]
  * @property {Array<{ resources?: string[] }>} [web_accessible_resources]
  */
@@ -83,6 +84,7 @@ async function validateManifest(context) {
   }
 
   await requirePath(context, manifest.action?.default_popup, "manifest action popup");
+  await requirePath(context, manifest.options_page, "manifest options page");
 
   for (const script of manifest.content_scripts ?? []) {
     for (const jsFile of script.js ?? []) {
@@ -113,15 +115,7 @@ async function validateIndex(context) {
     }
   }
 
-  const assetRefs = [...html.matchAll(/(?:src|href)="([^"]+)"/g)].map(
-    (match) => match[1]
-  );
-  for (const ref of assetRefs) {
-    if (ref.startsWith("http") || ref.startsWith("#")) {
-      continue;
-    }
-    await requirePath(context, ref, "index.html reference");
-  }
+  await validateHtmlReferences(context, "index.html", html);
 }
 
 /**
@@ -130,9 +124,17 @@ async function validateIndex(context) {
  */
 async function validateScripts(context) {
   const html = (await readText(context, "index.html")) ?? "";
+  const optionsHtml = (await readText(context, "options.html")) ?? "";
+  if (optionsHtml) {
+    await validateHtmlReferences(context, "options.html", optionsHtml);
+  }
   const scripts = [...html.matchAll(/<script[^>]+src="([^"]+)"/g)].map(
     (match) => match[1]
   );
+  const optionsScripts = [...optionsHtml.matchAll(/<script[^>]+src="([^"]+)"/g)].map(
+    (match) => match[1]
+  );
+  scripts.push(...optionsScripts);
   scripts.push("js/inject.js", "js/injected.js");
 
   for (const scriptPath of new Set(scripts)) {
@@ -146,6 +148,24 @@ async function validateScripts(context) {
     } catch (error) {
       context.failures.push(`${scriptPath} has a syntax error: ${getErrorMessage(error)}`);
     }
+  }
+}
+
+/**
+ * @param {ValidationContext} context
+ * @param {string} htmlPath
+ * @param {string} html
+ * @returns {Promise<void>}
+ */
+async function validateHtmlReferences(context, htmlPath, html) {
+  const assetRefs = [...html.matchAll(/(?:src|href)="([^"]+)"/g)].map(
+    (match) => match[1]
+  );
+  for (const ref of assetRefs) {
+    if (ref.startsWith("http") || ref.startsWith("#")) {
+      continue;
+    }
+    await requirePath(context, ref, `${htmlPath} reference`);
   }
 }
 

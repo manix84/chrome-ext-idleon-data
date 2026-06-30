@@ -3,7 +3,7 @@ import { spawn } from "node:child_process";
 import * as esbuild from "esbuild";
 
 const extensionRoot = "dist/extension";
-const staticFiles = ["assets", "index.html", "manifest.json", "PRIVACY.md", "README.md"];
+const staticFiles = ["assets", "index.html", "options.html", "manifest.json", "PRIVACY.md", "README.md"];
 
 await rm(extensionRoot, { recursive: true, force: true });
 await mkdir(extensionRoot, { recursive: true });
@@ -19,6 +19,7 @@ await esbuild.build({
   entryPoints: {
     "js/inject": "src/js/inject.ts",
     "js/injected": "src/js/injected.ts",
+    "js/options": "src/js/options.ts",
     "js/popup": "src/js/popup.ts",
   },
   format: "iife",
