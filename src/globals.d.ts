@@ -58,6 +58,10 @@ interface FirebaseNamespace {
   firestore(): FirebaseDatabase;
 }
 
+interface IdleonReactBridge {
+  createElement(command: string, args: unknown[]): unknown;
+}
+
 declare const chrome: ChromeApi;
 
 declare const firebase: FirebaseNamespace;

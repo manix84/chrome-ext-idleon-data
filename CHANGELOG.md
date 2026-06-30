@@ -2,6 +2,13 @@
 
 Notable changes to this project are summarized here by released or package version.
 
+## [0.5.3] - 2026-06-30
+
+### Fixed
+
+- Fixed character name capture after Idleon stopped exposing the previous minified username-list global.
+- Added a fallback that reads character names from Idleon's current `getUserNameList` command bridge.
+
 ## [0.5.2] - 2026-06-30
 
 ### Added

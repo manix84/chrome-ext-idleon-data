@@ -1,6 +1,6 @@
 {
   "name": "idleon-api-downloader",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "private": true,
   "description": "Chrome extension for downloading and copying Idleon save data.",
   "type": "module",

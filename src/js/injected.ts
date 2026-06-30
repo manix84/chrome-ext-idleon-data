@@ -31,9 +31,46 @@ const getIdleonGlobal = (key: string): unknown => {
     return (globalThis as UnknownRecord)[key];
 };
 
+const getReactBridge = (): IdleonReactBridge | null => {
+    const reactValue = getIdleonGlobal("React");
+    if (typeof reactValue !== "object" || reactValue === null) {
+        return null;
+    }
+
+    const candidate = reactValue as Partial<IdleonReactBridge>;
+    if (typeof candidate.createElement === "function") {
+        return candidate as IdleonReactBridge;
+    }
+
+    return null;
+};
+
 const getStringValue = (value: unknown): string | null => {
     if (typeof value === "string" && value.length > 0) {
         return value;
+    }
+
+    return null;
+};
+
+const getUsernameList = (): string[] | null => {
+    const globalUsernameList = getIdleonGlobal("v");
+    if (Array.isArray(globalUsernameList) && globalUsernameList.every((value) => typeof value === "string")) {
+        return globalUsernameList;
+    }
+
+    const reactBridge = getReactBridge();
+    if (!reactBridge) {
+        return null;
+    }
+
+    try {
+        const bridgedUsernameList = reactBridge.createElement("getUserNameList", []);
+        if (Array.isArray(bridgedUsernameList) && bridgedUsernameList.every((value) => typeof value === "string")) {
+            return bridgedUsernameList;
+        }
+    } catch (error: unknown) {
+        logError("Failed to read character names from Idleon bridge.", error);
     }
 
     return null;
@@ -162,8 +199,9 @@ const queryFirebaseWithRetry = async (): Promise<void> => {
         //it is configured this way to be easy to change when the minified variable names possibly change
         const userId = getUserId();
         const guildId = await getGuildId(userId);
+        const usernameList = getUsernameList();
         const external: UnknownRecord = {
-            usernameList: getIdleonGlobal("v"),
+            charNameData: usernameList,
             database: getFirestoreDatabase(),
             userId,
             guildId,
@@ -187,7 +225,7 @@ const queryFirebaseWithRetry = async (): Promise<void> => {
             attempt: count,
         });
 
-        const send = new CustomEvent("PassCharNameToInject", { detail: external.usernameList });
+        const send = new CustomEvent("PassCharNameToInject", { detail: external.charNameData });
         window.dispatchEvent(send);
 
         const database = external.database as FirebaseDatabase;
