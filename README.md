@@ -35,13 +35,31 @@ The popup now also shows:
 
 The extension source lives in `src/js/**/*.ts`. The root repository is source code, not the packaged extension. GitHub Releases contain the compiled extension that should be loaded into Chrome.
 
-Install the repository Git hooks once per checkout:
+## Local setup
+
+Install dependencies with the lockfile:
+
+```sh
+npm ci
+```
+
+Install the repository Git hooks once per checkout so commits can run the version bump helper:
 
 ```sh
 npm run hooks:install
 ```
 
-The pre-commit hook bumps `package.json`, `package-lock.json`, and `manifest.json` for releasable changes. It defaults to a patch bump. It chooses a minor bump for broad staged changes, currently 10 or more releasable files, 500 or more changed lines, or 8 or more staged `src/` files. Use `VERSION_BUMP=minor git commit ...` to force a minor bump, or `VERSION_BUMP=none git commit ...` to skip the bump intentionally.
+The pre-commit hook bumps `package.json`, `package-lock.json`, and `manifest.json` for releasable changes. It defaults to a patch bump. It chooses a minor bump for broad staged changes, currently 10 or more releasable files, 500 or more changed lines, or 8 or more staged `src/` files.
+
+You can preview the hook's decision for currently staged files:
+
+```sh
+npm run version:bump:check
+```
+
+Use `VERSION_BUMP=minor git commit ...` to force a minor bump, or `VERSION_BUMP=none git commit ...` to skip the bump intentionally.
+
+## Build and validate
 
 After changing extension files, run:
 
@@ -51,20 +69,20 @@ npm run build
 
 This type-checks the TypeScript source, bundles the module entrypoints into `dist/extension/js`, and copies the static extension files into `dist/extension`.
 
-To validate the compiled extension package, run:
+Run the same checks used by GitHub Actions before opening a pull request:
 
 ```sh
+npm run lint
+npm run typecheck
+npm test
 npm run validate
 ```
 
-The validator checks the compiled manifest, popup asset references, required popup control IDs, and JavaScript syntax for the files loaded by the extension.
+`npm run validate` builds the compiled extension package and checks the manifest, popup asset references, required popup control IDs, and JavaScript syntax for the files loaded by the extension.
 
-Before opening a pull request, run the same checks used by GitHub Actions:
+To run only the release package validation locally:
 
 ```sh
-npm test
-npm run lint
-npm run typecheck
 npm run validate
 ```
 
