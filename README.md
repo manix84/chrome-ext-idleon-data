@@ -1,4 +1,4 @@
-# Idleon-Api-Downloader
+# Idleon-Api-Downloader 🎮
 
 [![Lint](https://github.com/Corbeno/Idleon-Api-Downloader/actions/workflows/lint.yml/badge.svg)](https://github.com/Corbeno/Idleon-Api-Downloader/actions/workflows/lint.yml)
 [![Tests](https://github.com/Corbeno/Idleon-Api-Downloader/actions/workflows/test.yml/badge.svg)](https://github.com/Corbeno/Idleon-Api-Downloader/actions/workflows/test.yml)
@@ -9,7 +9,7 @@ A Chrome extension that allows for the downloading of API data in JSON format se
 
 The extension uses Manifest V3 and is now built from TypeScript source.
 
-# How to get
+# How to get 📦
 
 1. Go to the GitHub Releases page for this repository
 2. Download the packaged release zip
@@ -21,7 +21,7 @@ The extension uses Manifest V3 and is now built from TypeScript source.
 
 Please note that I plan on making this extension available on the chrome web store.
 
-# How to use
+# How to use 🚀
 
 The extension is really easy to use once it is installed. Simply navigate to the legends of Idleon website (in Chrome of course) and click play. Once you are on the character selection screen you should be able to open the extension and a series of download/copy links should appear. Enjoy!
 
@@ -31,11 +31,11 @@ The popup now also shows:
 2. Better error icons for parse failures
 3. A "Clear Cached Data" button to reset stale captures
 
-# Development
+# Development 🛠️
 
 The extension source lives in `src/js/**/*.ts`. The root repository is source code, not the packaged extension. GitHub Releases contain the compiled extension that should be loaded into Chrome.
 
-## Local setup
+## Local setup ⚙️
 
 Install dependencies with the lockfile:
 
@@ -59,7 +59,7 @@ npm run version:bump:check
 
 Use `VERSION_BUMP=minor git commit ...` to force a minor bump, or `VERSION_BUMP=none git commit ...` to skip the bump intentionally.
 
-## Build and validate
+## Build and validate ✅
 
 After changing extension files, run:
 
@@ -94,11 +94,11 @@ npm run build:release
 
 The release zip is created from `dist/extension`, so it contains compiled JavaScript rather than TypeScript source.
 
-# Privacy
+# Privacy 🔒
 
 See [PRIVACY.md](PRIVACY.md) for what the extension captures, where it is stored, and which Chrome permissions are used.
 
-# Community
+# Community 🤝
 
 This project is owned and maintained as [`Corbeno/Idleon-Api-Downloader`](https://github.com/Corbeno/Idleon-Api-Downloader).
 
@@ -110,15 +110,15 @@ The best use of this extension is the ability to copy data that can be easily pa
 
 Upon viewing the JSON data, it might seem really messy in a text editor. That is because it is unformatted. Just paste the data into a JSON viewer such as http://jsonviewer.stack.hu/ and it makes viewing the data much easier.
 
-# How does it work?
+# How does it work? 🔍
 
 Idleon sends all of its game data to your browser as an XMLHttpRequest (XHR for short). The extension takes advantage of that and views the requests just like the game would but instead lets the player see all the data at once.
 
-# How do people use this?
+# How do people use this? 📊
 
 The raw JSON data is really messy and many things about the save data isn't very clear. Things aren't named consistently and there is a lot of extra "JSON" formatting that is unnecessary. I have written scripts to turn this messy data into a "clean" csv, but I also included the original save data in case you want to make your own! If you want to make tools that take advantage of the "clean" JSON, please be warned that it might change in the future as Idleon updates and things need to be re-organized.
 
-# I'm having issues!
+# I'm having issues! 🧰
 
 Whether you are trying to use the extension to paste into a spreadsheet or creating a whole new tool for people to use, if you are running into any issues please feel free to reach out to me on the official Idleon discord. I appreciate people who find bugs!
 
@@ -128,10 +128,10 @@ If you are having issues directly following an update to Idleon, chances are tha
 
 If you use multiple accounts, you might need to play on a character, go back to the character selection screen, then reload the page before the extension will work. This occurs as there is a bug with switching accounts and save data in the game itself.
 
-# "How can I help?"
+# "How can I help?" 🙌
 
 I put this project on Github for a reason! This is my first project with web development, so things are pretty sloppy in that area. If you think you can contribute in any way, please feel free to make a pull request. It would be much appreciated!
 
-# Special Thanks
+# Special Thanks ✨
 
 [Morta1](https://github.com/Morta1) - For overhauling the frontend to make it look **beautiful**!

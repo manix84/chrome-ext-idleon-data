@@ -1,8 +1,8 @@
-# Support
+# Support 🧰
 
 This project is owned and maintained as `Corbeno/Idleon-Api-Downloader`.
 
-## Getting Help
+## Getting Help 🙋
 
 Use GitHub Issues for reproducible bugs, parser/export problems, and documentation fixes.
 
@@ -15,6 +15,6 @@ Before opening an issue:
 
 Do not include private save data, account identifiers, tokens, or other sensitive information in public issues.
 
-## Not Supported
+## Not Supported 🚧
 
 This project cannot provide support for Idleon account issues, game server problems, Chrome extension loading restrictions, or third-party spreadsheet behavior outside the exported data format.

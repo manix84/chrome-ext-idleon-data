@@ -1,14 +1,14 @@
-# Contributing
+# Contributing 🤝
 
 This project is owned and maintained as `Corbeno/Idleon-Api-Downloader`.
 
-## Licensing
+## Licensing 📄
 
 No license has been declared for this repository at this time. Do not assume permission to reuse, redistribute, or relicense the code outside this project unless the owner adds a license or gives explicit permission.
 
 By submitting a pull request, you are proposing that your contribution be included in `Corbeno/Idleon-Api-Downloader` under whatever license the owner later chooses to apply to the project.
 
-## Development
+## Development 🛠️
 
 The extension source is TypeScript under `src/js`. Packaged releases are built from compiled output and published through GitHub Releases.
 
@@ -21,7 +21,7 @@ npm run typecheck
 npm run validate
 ```
 
-## Pull Requests
+## Pull Requests ✅
 
 Keep changes focused. Include a short description of the problem, what changed, and how you validated the change.
 

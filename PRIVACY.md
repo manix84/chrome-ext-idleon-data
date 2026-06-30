@@ -1,4 +1,4 @@
-# Privacy
+# Privacy 🔒
 
 Idleon API Downloader runs locally in your browser as an unpacked Chrome extension.
 
