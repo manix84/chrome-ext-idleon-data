@@ -2,6 +2,17 @@
 
 Notable changes to this project are summarized here by released or package version.
 
+## [0.5.10] - 2026-06-30
+
+### Added
+
+- Added a popup overview that summarizes detected parsed data, including character count, highest level, storage entries, card count, Looty count, and guild member count.
+- Added a visible warning when parsed characters use class IDs that are not yet mapped.
+
+### Changed
+
+- Ignored local captured raw data fixtures so personal save data is not accidentally committed.
+
 ## [0.5.9] - 2026-06-30
 
 ### Fixed
