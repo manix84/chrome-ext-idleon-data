@@ -4,6 +4,11 @@
 [![Tests](https://github.com/Corbeno/Idleon-Api-Downloader/actions/workflows/test.yml/badge.svg)](https://github.com/Corbeno/Idleon-Api-Downloader/actions/workflows/test.yml)
 [![Type Check](https://github.com/Corbeno/Idleon-Api-Downloader/actions/workflows/typecheck.yml/badge.svg)](https://github.com/Corbeno/Idleon-Api-Downloader/actions/workflows/typecheck.yml)
 [![Release](https://github.com/Corbeno/Idleon-Api-Downloader/actions/workflows/release.yml/badge.svg)](https://github.com/Corbeno/Idleon-Api-Downloader/actions/workflows/release.yml)
+![Version](https://img.shields.io/github/package-json/v/Corbeno/Idleon-Api-Downloader?label=version)
+[![Latest Release](https://img.shields.io/github/v/release/Corbeno/Idleon-Api-Downloader?label=release)](https://github.com/Corbeno/Idleon-Api-Downloader/releases)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue)
+![Manifest](https://img.shields.io/badge/Chrome%20Extension-Manifest%20V3-green)
+![License](https://img.shields.io/badge/license-not%20declared-lightgrey)
 
 A Chrome extension that allows for the downloading of API data in JSON format sent to the browser when Idleon is loaded. Short are the days of manually inputting your character's data into a spreadsheet.
 
