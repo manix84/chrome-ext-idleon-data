@@ -30,6 +30,14 @@ The popup now also shows:
 
 The extension source lives in `src/js/**/*.ts`. The root repository is source code, not the packaged extension. GitHub Releases contain the compiled extension that should be loaded into Chrome.
 
+Install the repository Git hooks once per checkout:
+
+```sh
+npm run hooks:install
+```
+
+The pre-commit hook bumps `package.json`, `package-lock.json`, and `manifest.json` for releasable changes. It defaults to a patch bump. It chooses a minor bump for broad staged changes, currently 10 or more releasable files, 500 or more changed lines, or 8 or more staged `src/` files. Use `VERSION_BUMP=minor git commit ...` to force a minor bump, or `VERSION_BUMP=none git commit ...` to skip the bump intentionally.
+
 After changing extension files, run:
 
 ```sh
