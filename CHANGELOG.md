@@ -2,6 +2,18 @@
 
 Notable changes to this project are summarized here by released or package version.
 
+## [0.5.6] - 2026-06-30
+
+### Added
+
+- Added normalized raw character data handling inspired by IdleonToolbox's parser structure.
+- Added raw item/card identifiers alongside mapped display names so exports are easier to debug when game data changes.
+
+### Changed
+
+- Typed guild parsing around explicit raw guild member fields and clean exported member records.
+- Routed character parser lookups through normalized per-character raw fields instead of repeated dynamic key construction.
+
 ## [0.5.3] - 2026-06-30
 
 ### Fixed
