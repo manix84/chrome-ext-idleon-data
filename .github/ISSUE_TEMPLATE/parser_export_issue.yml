@@ -1,0 +1,50 @@
+name: Parser or export issue
+description: Report incorrect copied, downloaded, CSV, or clean JSON output.
+title: "[Export]: "
+labels: ["parser", "export"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This project is owned and maintained as `Corbeno/Idleon-Api-Downloader`.
+
+        Do not attach raw private save data publicly. Redact examples to the smallest non-sensitive field needed.
+  - type: dropdown
+    id: export_type
+    attributes:
+      label: Affected export
+      options:
+        - Raw JSON
+        - Clean JSON
+        - Looty String
+        - Quests String
+        - Family import column
+        - Guild import column
+        - Character import column
+        - Guild CSV
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What output is wrong or missing?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected output
+      description: Describe the expected value or format without sharing private data.
+  - type: input
+    id: idleon_update
+    attributes:
+      label: Did this start after an Idleon update?
+      placeholder: "Yes, after update ... / No / Not sure"
+  - type: input
+    id: version
+    attributes:
+      label: Extension version or commit
+    validations:
+      required: true

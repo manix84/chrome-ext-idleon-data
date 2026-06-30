@@ -1,0 +1,55 @@
+name: Bug report
+description: Report a reproducible problem in Idleon API Downloader.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This project is owned and maintained as `Corbeno/Idleon-Api-Downloader`.
+
+        Do not include private save data, account identifiers, tokens, or other sensitive information.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: List the exact steps needed to reproduce the issue.
+      placeholder: |
+        1. Install release ...
+        2. Open Idleon ...
+        3. Click ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Extension version or commit
+      description: Which release zip or commit are you using?
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser
+      description: Browser and version.
+      placeholder: "Chrome ..."
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Include non-sensitive logs, screenshots, or notes.
