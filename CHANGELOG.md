@@ -2,6 +2,15 @@
 
 Notable changes to this project are summarized here by released or package version.
 
+## [0.5.9] - 2026-06-30
+
+### Fixed
+
+- Fixed clean-data parsing for captured Idleon saves that mix JSON strings with already-parsed arrays and objects.
+- Made unknown or newly added class IDs fall back safely instead of breaking character parsing.
+- Made star talent parsing tolerate missing legacy talent-page map keys.
+- Updated the popup character export controls to render the actual parsed character count instead of a fixed 9-character list.
+
 ## [0.5.8] - 2026-06-30
 
 ### Fixed
