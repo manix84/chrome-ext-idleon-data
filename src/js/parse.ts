@@ -17,6 +17,7 @@ import {
 } from "./maps/maps";
 import { mobMap } from "./maps/mobMap";
 import { talentMap } from "./maps/talentMap";
+import { getCharacterRawField, normalizeCharacterRawData, parseJsonField, type NormalizedCharacterRawData } from "./rawData";
 
 /** Parses raw Idleon save data into the cleaner shape used by exports and integrations. */
 const parseData = (rawJson: RawIdleonData): CleanIdleonData  => {
@@ -36,7 +37,8 @@ const parseData = (rawJson: RawIdleonData): CleanIdleonData  => {
         characters.push(newCharacter);
     }
 
-    r.characters = fillCharacterData(characters, numChars, fields);
+    const normalizedCharacterData = normalizeCharacterRawData(fields, charNameData);
+    r.characters = fillCharacterData(characters, normalizedCharacterData, fields);
 
     // account data
     r.account = fillAccountData(templateData.account as IdleonAccount, r.characters, fields);
@@ -261,20 +263,21 @@ const createRefineryData = (fields: IdleonFields): UnknownRecord  => {
 
 // grabs information from fields and inserts it into characters and returns the filled out characters
 // only fills out information based on numChars given
-const fillCharacterData = (characters: IdleonCharacter[], numChars: number, fields: IdleonFields): IdleonCharacter[]  => {
-    for (let i = 0; i < numChars; i++) {
-        characters[i].class = classIndexMap[parseInt(getAnyFieldValue(fields["CharacterClass_" + i]))];
-        characters[i].money = parseInt(fields["Money_" + i]);
-        characters[i].AFKtarget = fields["AFKtarget_" + i];
-        characters[i].currentMap = parseInt(getAnyFieldValue(fields["CurrentMap_" + i]));
-        characters[i].npcDialogue = JSON.parse(fields["NPCdialogue_" + i]);
-        characters[i].timeAway = parseInt(getAnyFieldValue(fields["PTimeAway_" + i]));
-        characters[i].instaRevives = parseInt(getAnyFieldValue(fields["PVInstaRevives_" + i]));
-        characters[i].gender = parseInt(getAnyFieldValue(fields["PVGender_" + i]));
-        characters[i].minigamePlays = parseInt(getAnyFieldValue(fields["PVMinigamePlays_" + i]));
+const fillCharacterData = (characters: IdleonCharacter[], normalizedCharacterData: NormalizedCharacterRawData[], fields: IdleonFields): IdleonCharacter[]  => {
+    for (let i = 0; i < normalizedCharacterData.length; i++) {
+        const characterRawData = normalizedCharacterData[i];
+        characters[i].class = classIndexMap[parseInt(getAnyFieldValue(getCharacterRawField(characterRawData, "CharacterClass")))];
+        characters[i].money = parseInt(getCharacterRawField(characterRawData, "Money"));
+        characters[i].AFKtarget = getCharacterRawField(characterRawData, "AFKtarget");
+        characters[i].currentMap = parseInt(getAnyFieldValue(getCharacterRawField(characterRawData, "CurrentMap")));
+        characters[i].npcDialogue = parseJsonField(getCharacterRawField(characterRawData, "NPCdialogue"));
+        characters[i].timeAway = parseInt(getAnyFieldValue(getCharacterRawField(characterRawData, "PTimeAway")));
+        characters[i].instaRevives = parseInt(getAnyFieldValue(getCharacterRawField(characterRawData, "PVInstaRevives")));
+        characters[i].gender = parseInt(getAnyFieldValue(getCharacterRawField(characterRawData, "PVGender")));
+        characters[i].minigamePlays = parseInt(getAnyFieldValue(getCharacterRawField(characterRawData, "PVMinigamePlays")));
 
         // basic stats
-        const statlist = fields["PVStatList_" + i];
+        const statlist = getCharacterRawField(characterRawData, "PVStatList");
         characters[i].strength = parseInt(statlist[0]);
         characters[i].agility = parseInt(statlist[1]);
         characters[i].wisdom = parseInt(statlist[2]);
@@ -282,10 +285,10 @@ const fillCharacterData = (characters: IdleonCharacter[], numChars: number, fiel
         characters[i].level = parseInt(statlist[4]);
 
         // personal PO box data
-        characters[i].POBoxUpgrades = JSON.parse(fields["POu_" + i]);
+        characters[i].POBoxUpgrades = parseJsonField(getCharacterRawField(characterRawData, "POu"));
 
         // inventory bags used
-        const rawInvBagsUsed = JSON.parse(fields["InvBagsUsed_" + i]);
+        const rawInvBagsUsed = parseJsonField<DynamicRecord>(getCharacterRawField(characterRawData, "InvBagsUsed"));
         const bags = Object.keys(rawInvBagsUsed);
         const invBagsUsed = [];
         for (let j = 0; j < bags.length; j++) {
@@ -297,13 +300,13 @@ const fillCharacterData = (characters: IdleonCharacter[], numChars: number, fiel
         characters[i].invBagsUsed = invBagsUsed;
 
         // inventory
-        const inventoryItemNames = fields["InventoryOrder_" + i];
-        const inventoryItemCounts = fields["ItemQTY_" + i];
+        const inventoryItemNames = getCharacterRawField(characterRawData, "InventoryOrder");
+        const inventoryItemCounts = getCharacterRawField(characterRawData, "ItemQTY");
         characters[i].inventory = condenseTwoRawArrays(inventoryItemNames, inventoryItemCounts, "name", "count", itemMap, null, false, true);
 
         // equipment (0 = armor, 1 = tools, 2 = food)
-        const equipableNames = fields["EquipOrder_" + i];
-        const equipableCounts = fields["EquipQTY_" + i];
+        const equipableNames = getCharacterRawField(characterRawData, "EquipOrder");
+        const equipableCounts = getCharacterRawField(characterRawData, "EquipQTY");
 
         const rawEquipmentNames = equipableNames[0];
         const rawEquipmentCounts = equipableCounts[0];
@@ -312,13 +315,13 @@ const fillCharacterData = (characters: IdleonCharacter[], numChars: number, fiel
         // IMm_# = players inventory (todo later as it isn't usefull for calculations)
         // EMm0_# = equips
         // EMm1_# = tools
-        const equipmentStoneData = JSON.parse(fields["EMm0_" + i]) as DynamicRecord;
+        const equipmentStoneData = parseJsonField<DynamicRecord>(getCharacterRawField(characterRawData, "EMm0"));
         characters[i].equipment = addUpgradeStoneData(plainEquipmentData, equipmentStoneData);
 
         const rawToolNames = equipableNames[1];
         const rawToolCounts = equipableCounts[1];
         const plainToolData = condenseTwoRawArrays(rawToolNames, rawToolCounts, "name", "count", itemMap, null, false, true);
-        const toolStoneData = JSON.parse(fields["EMm1_" + i]) as DynamicRecord;
+        const toolStoneData = parseJsonField<DynamicRecord>(getCharacterRawField(characterRawData, "EMm1"));
         characters[i].tools = addUpgradeStoneData(plainToolData, toolStoneData);
 
         const rawFoodNames = equipableNames[2];
@@ -326,13 +329,13 @@ const fillCharacterData = (characters: IdleonCharacter[], numChars: number, fiel
         characters[i].food = condenseTwoRawArrays(rawFoodNames, rawFoodCounts, "name", "count", itemMap, null, false, true);
 
         // obols
-        const rawObols = fields["ObolEqO0_" + i];
+        const rawObols = getCharacterRawField(characterRawData, "ObolEqO0");
         const obolNames = condenseRawArray(rawObols, obolNameMap);
-        const obolMap = JSON.parse(fields["ObolEqMAP_" + i]) as DynamicRecord;
+        const obolMap = parseJsonField<DynamicRecord>(getCharacterRawField(characterRawData, "ObolEqMAP"));
         characters[i].obols = formObolData(obolNames, obolMap);
 
         // statues
-        const statueArray = JSON.parse(fields["StatueLevels_" + i]);
+        const statueArray = parseJsonField<DynamicValue[]>(getCharacterRawField(characterRawData, "StatueLevels"));
         const statueItems = [];
         for (let j = 0; j < statueArray.length; j++) {
             statueItems.push({
@@ -343,20 +346,20 @@ const fillCharacterData = (characters: IdleonCharacter[], numChars: number, fiel
         characters[i].statueLevels = statueItems;
 
         // cards
-        const cardsArray = fields["CardEquip_" + i];
+        const cardsArray = getCharacterRawField(characterRawData, "CardEquip");
         characters[i].cardsEquip = condenseRawArray(cardsArray, cardEquipMap);
 
         // card set
-        const rawCardSet = fields["CSetEq_" + i];
+        const rawCardSet = getCharacterRawField(characterRawData, "CSetEq");
         const defaultCardSetName = "None";
         let cardSetName = defaultCardSetName;
         if (String(rawCardSet) !== "{}") {
-            cardSetName = Object.keys(JSON.parse(rawCardSet))[0];
+            cardSetName = Object.keys(parseJsonField<DynamicRecord>(rawCardSet))[0];
         }
         characters[i].cardSetEquip = cardSetMap[cardSetName];
 
         // skill levels
-        const rawSkillLevels = fields["Lv0_" + i];
+        const rawSkillLevels = getCharacterRawField(characterRawData, "Lv0");
         const unmappedSkillLevels = condenseRawArray(rawSkillLevels);
         const mappedSkillLevels: Record<string, number> = {};
         for (let j = 0; j < unmappedSkillLevels.length; j++) {
@@ -369,7 +372,7 @@ const fillCharacterData = (characters: IdleonCharacter[], numChars: number, fiel
         characters[i].skillLevels = mappedSkillLevels;
 
         // star signs
-        const rawStarSignData = fields["PVtStarSign_" + i];
+        const rawStarSignData = getCharacterRawField(characterRawData, "PVtStarSign");
         const starSignSplit = rawStarSignData.split(",");
         for (let j = 0; j < starSignSplit.length; j++) {
             starSignSplit[j] = starSignSplit[j].replace(/_/, "-1");
@@ -383,7 +386,7 @@ const fillCharacterData = (characters: IdleonCharacter[], numChars: number, fiel
         characters[i].starSigns = starSignFinal;
 
         // talents
-        const unmappedTalents = JSON.parse(fields["SL_" + i]);
+        const unmappedTalents = parseJsonField<DynamicRecord>(getCharacterRawField(characterRawData, "SL"));
         const unmappedTalentsKeys = Object.keys(unmappedTalents);
         const mappedTalents: Record<string, CsvValue> = {};
         // change keys to their talent name
@@ -421,7 +424,7 @@ const fillCharacterData = (characters: IdleonCharacter[], numChars: number, fiel
         characters[i].starTalentLevels = starTalentIndexed;
 
         // talent attack loadout
-        const unmappedLoadoutRaw = JSON.parse(fields["AttackLoadout_" + i]);
+        const unmappedLoadoutRaw = parseJsonField<UnknownList[]>(getCharacterRawField(characterRawData, "AttackLoadout"));
         // merge them all into one array
         let unmappedLoadout: CsvList = [];
         for (let j = 0; j < unmappedLoadoutRaw.length; j++) {
@@ -444,8 +447,9 @@ const fillCharacterData = (characters: IdleonCharacter[], numChars: number, fiel
         characters[i].attackLoadout = mappedLoadout;
 
         // fishing toolkit
-        characters[i].fishingToolkitEquipped.bait = fishingBaitMap[parseInt(fields["PVFishingToolkit_" + i][0])];
-        characters[i].fishingToolkitEquipped.line = fishingLineMap[parseInt(fields["PVFishingToolkit_" + i][1])];
+        const rawFishingToolkit = getCharacterRawField(characterRawData, "PVFishingToolkit");
+        characters[i].fishingToolkitEquipped.bait = fishingBaitMap[parseInt(rawFishingToolkit[0])];
+        characters[i].fishingToolkitEquipped.line = fishingLineMap[parseInt(rawFishingToolkit[1])];
 
         // equipped bubbles
         const charEquippedBubbles = JSON.parse(fields.CauldronBubbles)[i];
@@ -455,7 +459,7 @@ const fillCharacterData = (characters: IdleonCharacter[], numChars: number, fiel
         ]
 
         // anvil
-        const rawAnvil = fields["AnvilPA_" + i];
+        const rawAnvil = getCharacterRawField(characterRawData, "AnvilPA");
         // [0-13] of rawAnvil are each anvil product
         // of each product...
         // 0 = amount to be produced (claimed)
