@@ -1,15 +1,15 @@
 # Idleon-Api-Downloader 🎮
 
-![Version](https://img.shields.io/badge/version-0.3.1-blue)
-[![Latest Release](https://img.shields.io/badge/release-GitHub-blue)](releases)
+![Version](https://img.shields.io/github/package-json/v/manix84/chrome-ext-idleon-data?filename=package.json)
+[![Latest Release](https://img.shields.io/badge/release-GitHub-blue)](https://github.com/manix84/chrome-ext-idleon-data/releases)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue)
 ![Manifest](https://img.shields.io/badge/Chrome%20Extension-Manifest%20V3-green)
 ![License](https://img.shields.io/badge/license-not%20declared-lightgrey)
 
-[![Lint](actions/workflows/lint.yml/badge.svg)](actions/workflows/lint.yml)
-[![Tests](actions/workflows/test.yml/badge.svg)](actions/workflows/test.yml)
-[![Type Check](actions/workflows/typecheck.yml/badge.svg)](actions/workflows/typecheck.yml)
-[![Release](actions/workflows/release.yml/badge.svg)](actions/workflows/release.yml)
+[![Lint](https://github.com/manix84/chrome-ext-idleon-data/actions/workflows/lint.yml/badge.svg)](https://github.com/manix84/chrome-ext-idleon-data/actions/workflows/lint.yml)
+[![Tests](https://github.com/manix84/chrome-ext-idleon-data/actions/workflows/test.yml/badge.svg)](https://github.com/manix84/chrome-ext-idleon-data/actions/workflows/test.yml)
+[![Type Check](https://github.com/manix84/chrome-ext-idleon-data/actions/workflows/typecheck.yml/badge.svg)](https://github.com/manix84/chrome-ext-idleon-data/actions/workflows/typecheck.yml)
+[![Release](https://github.com/manix84/chrome-ext-idleon-data/actions/workflows/release.yml/badge.svg)](https://github.com/manix84/chrome-ext-idleon-data/actions/workflows/release.yml)
 
 A Chrome extension that allows for the downloading of API data in JSON format sent to the browser when Idleon is loaded. Short are the days of manually inputting your character's data into a spreadsheet.
 
