@@ -1,11 +1,11 @@
 # Idleon-Api-Downloader 🎮
 
-[![Lint](https://github.com/Corbeno/Idleon-Api-Downloader/actions/workflows/lint.yml/badge.svg)](https://github.com/Corbeno/Idleon-Api-Downloader/actions/workflows/lint.yml)
-[![Tests](https://github.com/Corbeno/Idleon-Api-Downloader/actions/workflows/test.yml/badge.svg)](https://github.com/Corbeno/Idleon-Api-Downloader/actions/workflows/test.yml)
-[![Type Check](https://github.com/Corbeno/Idleon-Api-Downloader/actions/workflows/typecheck.yml/badge.svg)](https://github.com/Corbeno/Idleon-Api-Downloader/actions/workflows/typecheck.yml)
-[![Release](https://github.com/Corbeno/Idleon-Api-Downloader/actions/workflows/release.yml/badge.svg)](https://github.com/Corbeno/Idleon-Api-Downloader/actions/workflows/release.yml)
-![Version](https://img.shields.io/github/package-json/v/Corbeno/Idleon-Api-Downloader?label=version)
-[![Latest Release](https://img.shields.io/github/v/release/Corbeno/Idleon-Api-Downloader?label=release)](https://github.com/Corbeno/Idleon-Api-Downloader/releases)
+[![Lint](actions/workflows/lint.yml/badge.svg)](actions/workflows/lint.yml)
+[![Tests](actions/workflows/test.yml/badge.svg)](actions/workflows/test.yml)
+[![Type Check](actions/workflows/typecheck.yml/badge.svg)](actions/workflows/typecheck.yml)
+[![Release](actions/workflows/release.yml/badge.svg)](actions/workflows/release.yml)
+![Version](https://img.shields.io/badge/version-0.3.1-blue)
+[![Latest Release](https://img.shields.io/badge/release-GitHub-blue)](releases)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue)
 ![Manifest](https://img.shields.io/badge/Chrome%20Extension-Manifest%20V3-green)
 ![License](https://img.shields.io/badge/license-not%20declared-lightgrey)
