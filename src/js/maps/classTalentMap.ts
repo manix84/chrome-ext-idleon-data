@@ -1,5 +1,6 @@
+/// <reference path="../../globals.d.ts" />
 // maps class index to their display names
-var classIndexMap = {
+const classIndexMap: StringMap = {
     1: "Beginner",
     2: "Journeyman",
     3: "Maestro",
@@ -44,7 +45,7 @@ var classIndexMap = {
 };
 
 // maps a class with its talent page(s)
-var classTalentMap = {
+const classTalentMap: StringListMap = {
     "Beginner": ["Beginner"],
 
     "Journeyman": [
@@ -117,7 +118,7 @@ var classTalentMap = {
 }
 
 // maps a talent page with its coorsponding talents
-var classTalentPageMap = {
+const classTalentPageMap: StringListMap = {
     "Beginner": [
         "HEALTH_BOOSTER",
         "MANA_BOOSTER",

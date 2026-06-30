@@ -1,8 +1,8 @@
-queryFirebaseWithRetry();
-
-async function queryFirebaseWithRetry() {
+/// <reference path="../globals.d.ts" />
+/** Polls Idleon's page globals until Firebase handles are available, then emits save data events. */
+const queryFirebaseWithRetry = async (): Promise<void> => {
     let count = 0;
-    let maxTimeout = 60;
+    const maxTimeout = 60;
     while (true) {
         if (count > maxTimeout) {
             console.error("Reached max timeout to check variables. Did their names change?");
@@ -12,7 +12,7 @@ async function queryFirebaseWithRetry() {
 
         //grab globally accessable variables from other scripts (mainly Z.js and firebase.js)
         //it is configured this way to be easy to change when the minified variable names possibly change
-        let external = {
+        const external: UnknownRecord = {
             usernameList: v,
             database: d,
             userId: l,
@@ -31,16 +31,16 @@ async function queryFirebaseWithRetry() {
             continue;
         };
 
-        var send = new CustomEvent("PassCharNameToInject", { detail: external.usernameList });
+        const send = new CustomEvent("PassCharNameToInject", { detail: external.usernameList });
         window.dispatchEvent(send);
 
-        external.database.collection("_data").doc(external.userId).get().then(doc => {
-            var event = new CustomEvent("PassSaveToInject", { detail: doc.data() });
+        (external.database as FirebaseDatabase).collection("_data").doc(String(external.userId)).get().then((doc: FirebaseDocumentSnapshot) => {
+            const event = new CustomEvent("PassSaveToInject", { detail: doc.data() });
             window.dispatchEvent(event);
         });
 
-        external.database.collection("_guildStat").doc(external.guildId).get().then(doc => {
-            var send = new CustomEvent("PassGuildInfoToInject", { detail: doc.data() });
+        (external.database as FirebaseDatabase).collection("_guildStat").doc(String(external.guildId)).get().then((doc: FirebaseDocumentSnapshot) => {
+            const send = new CustomEvent("PassGuildInfoToInject", { detail: doc.data() });
             window.dispatchEvent(send);
         });
 
@@ -56,8 +56,10 @@ async function queryFirebaseWithRetry() {
 
         break;
     }
-}
+};
 
-function sleep(ms) {
+const sleep = (ms: number): Promise<void>  => {
     return new Promise(resolve => setTimeout(resolve, ms));
-}
+};
+
+queryFirebaseWithRetry();

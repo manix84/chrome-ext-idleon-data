@@ -1,5 +1,6 @@
 import js from "@eslint/js";
 import globals from "globals";
+import tseslint from "typescript-eslint";
 
 const extensionGlobals = {
   ...globals.browser,
@@ -51,6 +52,7 @@ export default [
     ignores: ["dist/**", "node_modules/**"],
   },
   js.configs.recommended,
+  ...tseslint.configs.recommended,
   {
     files: ["tools/**/*.mjs", "scripts/**/*.mjs", "test/**/*.mjs", "eslint.config.mjs"],
     languageOptions: {
@@ -60,15 +62,33 @@ export default [
     },
   },
   {
-    files: ["js/**/*.js"],
+    files: ["src/js/**/*.ts"],
     languageOptions: {
       ecmaVersion: 2022,
       globals: extensionGlobals,
+      parser: tseslint.parser,
       sourceType: "script",
     },
     rules: {
+      "no-var": "error",
       "no-redeclare": "off",
+      "prefer-arrow-callback": "error",
+      "prefer-const": "error",
+      "@typescript-eslint/no-explicit-any": "error",
+      "@typescript-eslint/triple-slash-reference": "off",
+      "@typescript-eslint/no-unused-vars": "off",
       "no-unused-vars": "off",
+    },
+  },
+  {
+    files: ["src/**/*.d.ts"],
+    languageOptions: {
+      parser: tseslint.parser,
+    },
+    rules: {
+      "no-var": "off",
+      "@typescript-eslint/no-explicit-any": "error",
+      "@typescript-eslint/triple-slash-reference": "off",
     },
   },
 ];

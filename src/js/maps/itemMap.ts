@@ -1,5 +1,6 @@
+/// <reference path="../../globals.d.ts" />
 // maps items stored names to their display name in game
-var itemMap = {
+const itemMap: StringMap = {
     "Blank": "None",
     "LockedInvSpace": "LockedInvSpace",
 

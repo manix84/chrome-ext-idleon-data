@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "allowJs": false,
+    "declaration": false,
+    "lib": ["DOM", "ES2022"],
+    "module": "none",
+    "noEmitOnError": true,
+    "noImplicitAny": false,
+    "outDir": "dist/extension",
+    "rootDir": "src",
+    "skipLibCheck": true,
+    "sourceMap": false,
+    "strict": false,
+    "target": "ES2022",
+    "types": []
+  },
+  "include": ["src/**/*.d.ts", "src/**/*.ts"]
+}

@@ -1,32 +1,12 @@
-updateAllButtons();
-chrome.storage.onChanged.addListener(function (changes, namespace) {
-  if (namespace !== "local") {
-    return;
-  }
-  if (changes.data || changes.updatedAt) {
-    updateAllButtons();
-  }
-});
+/// <reference path="../globals.d.ts" />
+type ParsedAction = {
+  id: string;
+  data: string | null;
+};
 
-document.getElementById("clearDataBtn").addEventListener("click", function () {
-  chrome.storage.local.set(
-    {
-      data: null,
-      updatedAt: null,
-      saveData: null,
-      charNameData: null,
-      guildInfo: null,
-    },
-    function () {
-      document.getElementById("content").style.display = "none";
-      document.getElementById("loader").style.display = "block";
-      setStatus("Cached data cleared.");
-    }
-  );
-});
-
-function updateAllButtons() {
-  chrome.storage.local.get(["data", "updatedAt"], function (result) {
+/** Reads cached save data and wires popup copy/download actions. */
+const updateAllButtons = (): void  => {
+  chrome.storage.local.get(["data", "updatedAt"], (result: UnknownRecord) => {
     const rawJson = result.data;
     const updatedAt = result.updatedAt;
     const content = document.getElementById("content");
@@ -42,25 +22,25 @@ function updateAllButtons() {
     content.style.display = "block";
     loader.style.display = "none";
     if (updatedAt) {
-      setStatus("Last updated: " + new Date(updatedAt).toLocaleString());
+      setStatus("Last updated: " + new Date(updatedAt as string | number | Date).toLocaleString());
     } else {
       setStatus("Data ready.");
     }
 
     const rawString = safeStringify(rawJson);
-    const cleanJson = parseAnyData(parseData, rawJson);
+    const cleanJson = parseAnyData<RawIdleonData, CleanIdleonData>(parseData, rawJson as RawIdleonData);
     const cleanString = safeStringify(cleanJson);
-    const lootyString = parseAnyData(function (data) {
+    const lootyString = parseAnyData((data: RawIdleonData) => {
       return data.saveData.Cards1.replace(/"/g, "\\");
-    }, rawJson);
-    const questsString = parseAnyData(function (data) {
+    }, rawJson as RawIdleonData);
+    const questsString = parseAnyData((data: CleanIdleonData) => {
       return safeStringify(data.account.quests);
     }, cleanJson);
     const familyCsv = parseAnyData(getFamilyCsv, cleanJson);
     const guildCsv = parseAnyData(getGuildCsv, cleanJson);
     const guildExportCsvString = parseAnyData(guildExportCsv, cleanJson);
 
-    const actions = [
+    const actions: ParsedAction[] = [
       { id: "rawCopyLink", data: rawString },
       { id: "cleanJsonCopyLink", data: cleanString },
       { id: "lootyCopyLink", data: lootyString },
@@ -72,13 +52,13 @@ function updateAllButtons() {
 
     const characters = document.querySelectorAll(".characters > li > button");
     for (let i = 0; i < 9; i++) {
-      const charData = parseAnyData(function () {
+      const charData = parseAnyData(() => {
         return getCharacterCsv(cleanJson, i);
       }, cleanJson);
       actions.push({ id: characters[i].id, data: charData });
     }
 
-    actions.forEach(function (action) {
+    actions.forEach((action) => {
       setCopyButtonState(action.id, action.data);
     });
 
@@ -89,9 +69,9 @@ function updateAllButtons() {
       "cleanData.json"
     );
   });
-}
+};
 
-function safeStringify(value) {
+const safeStringify = (value: unknown): string | null  => {
   if (value === null || value === undefined) {
     return null;
   }
@@ -101,9 +81,9 @@ function safeStringify(value) {
     console.error("Failed to stringify data.", e);
     return null;
   }
-}
+};
 
-function parseAnyData(func, data) {
+const parseAnyData = <T, R>(func: (data: T) => R, data: T | null | undefined): R | null  => {
   if (data === null || data === undefined) {
     return null;
   }
@@ -113,9 +93,9 @@ function parseAnyData(func, data) {
     console.error("Unable to parse function.", e);
     return null;
   }
-}
+};
 
-async function copyTextToClipboard(text) {
+const copyTextToClipboard = async (text: string): Promise<void> => {
   if (navigator.clipboard && navigator.clipboard.writeText) {
     await navigator.clipboard.writeText(text);
     return;
@@ -130,10 +110,10 @@ async function copyTextToClipboard(text) {
   el.select();
   document.execCommand("copy");
   document.body.removeChild(el);
-}
+};
 
-function setCopyButtonState(elementId, data) {
-  const button = document.getElementById(elementId);
+const setCopyButtonState = (elementId: string, data: string | null): void  => {
+  const button = document.getElementById(elementId) as HTMLButtonElement | null;
   if (!button) {
     return;
   }
@@ -152,19 +132,19 @@ function setCopyButtonState(elementId, data) {
 
   button.onclick = invalid
     ? null
-    : function (e) {
+    : (e) => {
         copyTextToClipboard(data)
-          .then(function () {
+          .then(() => {
             showTooltip(e, "Copied!");
           })
-          .catch(function () {
+          .catch(() => {
             showTooltip(e, "Copy failed");
           });
       };
-}
+};
 
-function setDownloadButtonState(elementId, dataString, fileName) {
-  const downloadButton = document.getElementById(elementId);
+const setDownloadButtonState = (elementId: string, dataString: string | null, fileName: string): void  => {
+  const downloadButton = document.getElementById(elementId) as HTMLAnchorElement | null;
   if (!downloadButton) {
     return;
   }
@@ -193,18 +173,18 @@ function setDownloadButtonState(elementId, dataString, fileName) {
   const data = "text/json;charset=utf-8," + encodeURIComponent(dataString);
   downloadButton.setAttribute("download", fileName);
   downloadButton.setAttribute("href", "data:" + data);
-  downloadButton.onclick = function (e) {
+  downloadButton.onclick = (e) => {
     showTooltip(e, "Downloaded!");
   };
-}
+};
 
-function setStatus(text) {
+const setStatus = (text: string): void  => {
   const status = document.getElementById("status");
   status.innerText = text;
   status.style.display = "block";
-}
+};
 
-function showTooltip(e, text) {
+const showTooltip = (e: MouseEvent, text: string): void  => {
   const tooltip = document.getElementById("tooltip");
   tooltip.innerText = text;
   if (e.clientX + 80 > window.innerWidth) {
@@ -221,4 +201,31 @@ function showTooltip(e, text) {
   setTimeout(() => {
     tooltip.style.display = "none";
   }, 1000);
-}
+};
+
+updateAllButtons();
+chrome.storage.onChanged.addListener((changes: UnknownRecord, namespace: string) => {
+  if (namespace !== "local") {
+    return;
+  }
+  if (changes.data || changes.updatedAt) {
+    updateAllButtons();
+  }
+});
+
+document.getElementById("clearDataBtn").addEventListener("click", () => {
+  chrome.storage.local.set(
+    {
+      data: null,
+      updatedAt: null,
+      saveData: null,
+      charNameData: null,
+      guildInfo: null,
+    },
+    () => {
+      document.getElementById("content").style.display = "none";
+      document.getElementById("loader").style.display = "block";
+      setStatus("Cached data cleared.");
+    }
+  );
+});

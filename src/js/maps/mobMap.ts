@@ -1,6 +1,7 @@
+/// <reference path="../../globals.d.ts" />
 // maps stored mob names to their game display name
 // used for naming cards
-var mobMap = {
+const mobMap: StringMap = {
     "Blank": "Blank",
     "ForgeA": "Fire_Forge",
     "ForgeB": "Cinder_Forge",

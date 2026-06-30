@@ -1,4 +1,5 @@
-var templateData = {
+/// <reference path="../globals.d.ts" />
+const templateData: UnknownRecord = {
     "account": {
         "bundlesPurchased": {},
         "chest": {},

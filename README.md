@@ -2,12 +2,13 @@
 
 A Chrome extension that allows for the downloading of API data in JSON format sent to the browser when Idleon is loaded. Short are the days of manually inputting your character's data into a spreadsheet.
 
-The extension now uses Manifest V3.
+The extension uses Manifest V3 and is now built from TypeScript source.
 
 # How to get
 
-1. Download the repository by clicking the green Code button on this page then click "Download ZIP"
-2. Unzip the file to your location of choice (download folder works fine)
+1. Go to the GitHub Releases page for this repository
+2. Download the packaged release zip
+3. Unzip the file to your location of choice (download folder works fine)
 3. Navigate to chrome://extensions in chrome browser
 4. Make sure "Developer mode" is checked at the top right of the screen
 5. Click "Load unpacked" then select the folder you unzipped
@@ -27,13 +28,23 @@ The popup now also shows:
 
 # Development
 
-This project does not need a build step. After changing extension files, run:
+The extension source lives in `src/js/**/*.ts`. The root repository is source code, not the packaged extension. GitHub Releases contain the compiled extension that should be loaded into Chrome.
+
+After changing extension files, run:
+
+```sh
+npm run build
+```
+
+This compiles the TypeScript files into `dist/extension/js` and copies the static extension files into `dist/extension`.
+
+To validate the compiled extension package, run:
 
 ```sh
 npm run validate
 ```
 
-The validator checks the manifest, popup asset references, required popup control IDs, and JavaScript syntax for the files loaded by the extension.
+The validator checks the compiled manifest, popup asset references, required popup control IDs, and JavaScript syntax for the files loaded by the extension.
 
 Before opening a pull request, run the same checks used by GitHub Actions:
 
@@ -50,9 +61,19 @@ To create the release zip locally, run:
 npm run build:release
 ```
 
+The release zip is created from `dist/extension`, so it contains compiled JavaScript rather than TypeScript source.
+
 # Privacy
 
 See [PRIVACY.md](PRIVACY.md) for what the extension captures, where it is stored, and which Chrome permissions are used.
+
+# Community
+
+This project is owned and maintained as [`Corbeno/Idleon-Api-Downloader`](https://github.com/Corbeno/Idleon-Api-Downloader).
+
+See [CONTRIBUTING.md](CONTRIBUTING.md), [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), [SECURITY.md](SECURITY.md), and [SUPPORT.md](SUPPORT.md) before opening issues or pull requests.
+
+No license has been declared for this repository at this time. Do not assume permission to reuse, redistribute, or relicense the code outside this project unless the owner adds a license or gives explicit permission.
 
 The best use of this extension is the ability to copy data that can be easily pasted into the Idleon Calculator import spreadsheet. Doing so will allow you to min/max each of your character and view information the game normally doesn't give you. The spreadsheet is very powerful!
 

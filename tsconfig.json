@@ -1,18 +1,11 @@
 {
-  "compilerOptions": {
-    "allowJs": true,
-    "checkJs": true,
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "noEmit": true,
-    "strict": true,
-    "target": "ES2022",
-    "types": ["node"]
-  },
-  "include": [
-    "eslint.config.mjs",
-    "scripts/**/*.mjs",
-    "test/**/*.mjs",
-    "tools/**/*.mjs"
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.extension.json"
+    },
+    {
+      "path": "./tsconfig.tools.json"
+    }
   ]
 }

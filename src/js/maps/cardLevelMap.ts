@@ -1,10 +1,11 @@
+/// <reference path="../../globals.d.ts" />
 // represents the level up requirements for each card
 // Collected: 0
 // 1 Star: c[2]
 // 2 Star: c[2]*4
 // 3 Star: c[2]*9
 // where c[2] is the number values mapped here
-var cardLevelMap = {
+const cardLevelMap: NumberMap = {
     "mushG": 5,
     "mushR": 10,
     "frogG": 6,

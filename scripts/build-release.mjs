@@ -1,35 +1,31 @@
-import { mkdir, readFile, rm } from "node:fs/promises";
+import { mkdir, readFile } from "node:fs/promises";
 import { spawn } from "node:child_process";
 import path from "node:path";
-
-const releaseFiles = [
-  "assets",
-  "js",
-  "index.html",
-  "manifest.json",
-  "PRIVACY.md",
-  "README.md",
-];
 
 const packageJson = JSON.parse(await readFile("package.json", "utf8"));
 const archiveName = `${packageJson.name}-v${packageJson.version}.zip`;
 const archivePath = path.join("dist", archiveName);
 
-await rm("dist", { recursive: true, force: true });
 await mkdir("dist", { recursive: true });
 
-await run("zip", ["-r", archivePath, ...releaseFiles]);
+await run("npm", ["run", "build"]);
+await run("zip", ["-r", `../${archiveName}`, "."], {
+  cwd: "dist/extension",
+});
 
 console.log(`Created ${archivePath}`);
 
 /**
  * @param {string} command
  * @param {string[]} args
+ * @param {{ cwd?: string }} [options]
  * @returns {Promise<void>}
  */
-function run(command, args) {
+function run(command, args, options = {}) {
   return new Promise((resolve, reject) => {
     const child = spawn(command, args, {
+      cwd: options.cwd,
+      shell: process.platform === "win32",
       stdio: "inherit",
     });
 

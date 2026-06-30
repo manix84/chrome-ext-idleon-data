@@ -1,5 +1,6 @@
+/// <reference path="../../globals.d.ts" />
 // talents are stored as a number, so this maps that number to their name
-var talentMap = {
+const talentMap: StringMap = {
     0: "HEALTH_BOOSTER",
     1: "MANA_BOOSTER",
     2: "EXPERIENCE_BOOSTER",

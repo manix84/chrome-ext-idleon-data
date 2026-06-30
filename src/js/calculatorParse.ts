@@ -1,50 +1,54 @@
-function getFamilyCsv(cleanJson) {
+/// <reference path="../globals.d.ts" />
+/** Builds the Idleon Calculator family import column from clean save data. */
+const getFamilyCsv = (cleanJson: CleanIdleonData): string  => {
     return listToString(createFamilyList(cleanJson.account));
-}
+};
 
-function getGuildCsv(cleanJson) {
+/** Builds the Idleon Calculator guild bonus import column from clean save data. */
+const getGuildCsv = (cleanJson: CleanIdleonData): string  => {
     return listToString(createGuildList(cleanJson.account));
-}
+};
 
-function getCharacterCsv(cleanJson, index) {
+/** Builds one character import column, returning null when that slot is unavailable. */
+const getCharacterCsv = (cleanJson: CleanIdleonData, index: number): string | null  => {
     try{
         return listToString(createCharacterList(cleanJson.characters[index]));
     }catch{
         return null;
     }
-}
+};
 
-function listToString(list) {
-    var str = "";
+const listToString = (list: CsvList): string  => {
+    let str = "";
     // also replaces underscores with spaces as everything is originally with underscores
-    for (var i = 0; i < list.length; i++) {
+    for (let i = 0; i < list.length; i++) {
         str += String(list[i]).replace(/_/g, " ") + "\n";
     }
     return str;
-}
+};
 
-function skip(pushList, numberOfSkips) {
-    for (var i = 0; i < numberOfSkips; i++) {
+const skip = (pushList: CsvList, numberOfSkips: number): void  => {
+    for (let i = 0; i < numberOfSkips; i++) {
         pushList.push(" ");
     }
-}
+};
 
-function createGuildList(account) {
-    var list = [];
+const createGuildList = (account: IdleonAccount): CsvList  => {
+    const list: CsvList = [];
 
     // bonuses
-    for (var i = 0; i < 18; i++) {
+    for (let i = 0; i < 18; i++) {
         list.push(account.guild.bonuses[i]);
     }
 
     return list;
-}
+};
 
-function createFamilyList(account) {
-    var list = [];
+const createFamilyList = (account: IdleonAccount): CsvList  => {
+    const list: CsvList = [];
 
     // levels
-    var highestLevels = account.highestClasses;
+    const highestLevels = account.highestClasses;
     list.push(0); // Infinilyte
     list.push(0); // Maestro
     list.push(0); // Virtuoso
@@ -85,13 +89,13 @@ function createFamilyList(account) {
     list.push(highestLevels.Beginner || 0);
 
     // higest items
-    var highestItemCounts = account.highestItemCounts;
+    const highestItemCounts = account.highestItemCounts;
     list.push(highestItemCounts["Copper Ore"]);
     list.push(highestItemCounts["Oak Logs"]);
     list.push(highestItemCounts["Grass Leaf"]);
 
     // highest scores
-    var highScores = account.minigameHighscores;
+    const highScores = account.minigameHighscores;
     list.push(highScores.mining);
     list.push(highScores.chopping);
     list.push(highScores.fishing);
@@ -105,8 +109,8 @@ function createFamilyList(account) {
     list.push(((account.tasks.meritsOwned.world2[2]) > 0) ? "1" : "0");
 
     // cards
-    var cards = account.cards;
-    var cardList = [
+    const cards = account.cards;
+    const cardList: Array<CardData | "Filler" | undefined> = [
         cards["Green Mushroom"],
         cards["Red Mushroom"],
         cards["Frog"],
@@ -244,55 +248,56 @@ function createFamilyList(account) {
         "Filler" // E6
     ];
 
-    for (var i = 0; i < cardList.length; i++) {
-        if (cardList[i] == undefined || cardList[i] == "Filler") {
+    for (let i = 0; i < cardList.length; i++) {
+        const cardEntry = cardList[i];
+        if (cardEntry == undefined || cardEntry == "Filler") {
             list.push("Not Found");
         } else {
-            list.push(cardList[i].starLevel);
+            list.push(cardEntry.starLevel);
         }
     }
 
     // stamps
-    var stamps = account.stamps;
+    const stamps = account.stamps;
     // combat (28)
-    for (var i = 0; i < 28; i++) {
+    for (let i = 0; i < 28; i++) {
         list.push(stamps.combat[i]);
     }
     // skills (36)
-    for (var i = 0; i < 36; i++) {
+    for (let i = 0; i < 36; i++) {
         list.push(stamps.skills[i]);
     }
     // misc (20)
-    for (var i = 0; i < 20; i++) {
+    for (let i = 0; i < 20; i++) {
         list.push(stamps.misc[i]);
     }
 
     // alchemy
-    var alchemy = account.alchemy;
+    const alchemy = account.alchemy;
     // power
-    for (var i = 0; i < 15; i++) {
+    for (let i = 0; i < 15; i++) {
         list.push(alchemy.bubbleLevels.power[i]);
     }
     // quicc
-    for (var i = 0; i < 15; i++) {
+    for (let i = 0; i < 15; i++) {
         list.push(alchemy.bubbleLevels.quick[i]);
     }
     // high-iq
-    for (var i = 0; i < 15; i++) {
+    for (let i = 0; i < 15; i++) {
         list.push(alchemy.bubbleLevels.highIq[i]);
     }
     // kazam
-    for (var i = 0; i < 15; i++) {
+    for (let i = 0; i < 15; i++) {
         list.push(alchemy.bubbleLevels.kazam[i]);
     }
 
     // vials (41)
-    for (var i = 0; i < 41; i++) {
+    for (let i = 0; i < 41; i++) {
         list.push(alchemy.vialLevels[i]);
     }
 
     // obols
-    var obolOrder = [
+    const obolOrder = [
         0,
         23,
         4,
@@ -318,21 +323,22 @@ function createFamilyList(account) {
         12,
         16
     ];
-    for (var i = 0; i < obolOrder.length; i++) {
+    for (let i = 0; i < obolOrder.length; i++) {
         list.push(account.obols[obolOrder[i]].name);
     }
 
     return list;
-}
+};
 
 // create a list based on a given character that coorsponds to
 // each row in the character column in the spreadsheet
-function createCharacterList(character) {
-    var list = [];
+/** Creates the spreadsheet import column for a single character. */
+const createCharacterList = (character: IdleonCharacter): CsvList  => {
+    const list: CsvList = [];
 
     list.push(character.class);
 
-    var skillLevels = character.skillLevels;
+    const skillLevels = character.skillLevels;
     list.push(skillLevels.character);
     list.push(skillLevels.mining);
     list.push(skillLevels.smithing);
@@ -347,10 +353,10 @@ function createCharacterList(character) {
 
     // talents (non-star)
     // 75 total slots
-    var skillsKeys = Object.keys(character.talentLevels)
-    var j = 0;
+    const skillsKeys = Object.keys(character.talentLevels)
+    let j = 0;
     for (; j < skillsKeys.length; j++) {
-        var talentLevel = character.talentLevels[j];
+        const talentLevel = character.talentLevels[j];
         if (talentLevel == undefined) {
             list.push("0");
         } else {
@@ -361,7 +367,7 @@ function createCharacterList(character) {
 
     // star talents
     // 65 slots
-    var starTalents = character.starTalentLevels;
+    const starTalents = character.starTalentLevels;
     j = 0;
     for (; j < starTalents.length; j++) {
         list.push(starTalents[j]);
@@ -369,7 +375,7 @@ function createCharacterList(character) {
     skip(list, 65 - j);
 
     // next 12 are equipped abilities
-    var attackLoadout = character.attackLoadout;
+    const attackLoadout = character.attackLoadout;
     j = 0;
     for (; j < attackLoadout.length; j++) {
         list.push(attackLoadout[j]);
@@ -380,10 +386,10 @@ function createCharacterList(character) {
     list.push("Health Booster");
 
     // equipment
-    var equipment = character.equipment;
-    var stoneData = [];
+    const equipment = character.equipment;
+    const stoneData = [];
     // first 8 are in order
-    for (var k = 0; k < 8; k++) {
+    for (let k = 0; k < 8; k++) {
         list.push(equipment[k].name);
         stoneData.push(equipment[k].stoneData);
     }
@@ -396,18 +402,18 @@ function createCharacterList(character) {
     stoneData.push(equipment[13].stoneData);
 
     // tools
-    var tools = character.tools;
-    for (var k = 0; k < 6; k++) {
+    const tools = character.tools;
+    for (let k = 0; k < 6; k++) {
         list.push(tools[k].name);
         stoneData.push(tools[k].stoneData);
     }
 
     // go through stoneData and create a long list of every stat,
     // filling in 0 for none that exist
-    var expandedStoneData = [];
-    for (var k = 0; k < stoneData.length; k++) {
-        var data = stoneData[k];
-        var tmp = [];
+    let expandedStoneData = [];
+    for (let k = 0; k < stoneData.length; k++) {
+        const data = stoneData[k];
+        const tmp = [];
         tmp.push(data["Power"]);
         tmp.push(data["STR"]);
         tmp.push(data["AGI"]);
@@ -416,7 +422,7 @@ function createCharacterList(character) {
         tmp.push(data["Defence"]);
         tmp.push(data["UQ1val"]); // unique stat bonus
         tmp.push(undefined); // empty
-        for (var l = 0; l < tmp.length; l++) {
+        for (let l = 0; l < tmp.length; l++) {
             if (tmp[l] == undefined || tmp[l] == null) {
                 tmp[l] = 0;
             }
@@ -424,20 +430,20 @@ function createCharacterList(character) {
         expandedStoneData = expandedStoneData.concat(tmp);
     }
     // push that stoneData list to list
-    for (var k = 0; k < expandedStoneData.length; k++) {
+    for (let k = 0; k < expandedStoneData.length; k++) {
         list.push(expandedStoneData[k]);
     }
 
     // food
     // name, count, name, count, etc
-    for (var k = 0; k < 4; k++) {
-        var food = character.food[k];
+    for (let k = 0; k < 4; k++) {
+        const food = character.food[k];
         list.push(food.name);
         list.push(food.count);
     }
 
     // star signs
-    var starSigns = character.starSigns;
+    const starSigns = character.starSigns;
     list.push(starSigns[0]);
     list.push(starSigns[1]);
 
@@ -446,8 +452,8 @@ function createCharacterList(character) {
     list.push(character.fishingToolkitEquipped.line);
 
     // cards (player equipped)
-    for (var k = 0; k < 8; k++) {
-        var card = character.cardsEquip[k];
+    for (let k = 0; k < 8; k++) {
+        const card = character.cardsEquip[k];
         if (card == "B") { // nothing equipped
             list.push("None");
         } else {
@@ -460,13 +466,13 @@ function createCharacterList(character) {
 
     // statues
     // only do first 15
-    var statues = character.statueLevels
-    for (var k = 0; k < 15; k++) {
+    const statues = character.statueLevels
+    for (let k = 0; k < 15; k++) {
         list.push(statues[k].level);
     }
 
     // obols (21)
-    var obolOrder = [
+    const obolOrder = [
         1,
         5,
         0,
@@ -489,13 +495,13 @@ function createCharacterList(character) {
         10,
         11
     ];
-    for (var obolIndex in obolOrder) {
+    for (const obolIndex in obolOrder) {
         list.push(character.obols[obolIndex].name);
     }
 
     // Post Office Boxes
-    var boxes = character.POBoxUpgrades;
-    for (var k = 0; k < 12; k++) {
+    const boxes = character.POBoxUpgrades;
+    for (let k = 0; k < 12; k++) {
         list.push(boxes[k]);
     }
 
@@ -509,4 +515,4 @@ function createCharacterList(character) {
     list.push("Flies");
 
     return list;
-}
+};

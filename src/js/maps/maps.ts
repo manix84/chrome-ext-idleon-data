@@ -1,3 +1,4 @@
+/// <reference path="../../globals.d.ts" />
 /*
 Beginner = 1
 Journeyman = 2
@@ -18,7 +19,7 @@ Shaman = 33
 /*
 Maps class numbers stored in guild data to their display names
 */
-var classNumberMap = {
+const classNumberMap: StringMap = {
     1: "Beginner",
     2: "Journeyman",
     3: "Maestro",
@@ -33,7 +34,7 @@ var classNumberMap = {
     33: "Shaman"
 }
 
-var charSubclassMap = {
+const charSubclassMap: StringMap = {
     "Journeyman": "Beginner",
     "Barbarian": "Warrior",
     "Squire": "Warrior",
@@ -42,7 +43,7 @@ var charSubclassMap = {
     "Shaman": "Mage",
     "Wizard": "Mage"
 };
-var OLDcharSubclassMap = {
+const OLDcharSubclassMap: NumberMap = {
     2: 1,
     8: 7,
     9: 7,
@@ -52,7 +53,7 @@ var OLDcharSubclassMap = {
     32: 31
 };
 
-var skillIndexMap = {
+const skillIndexMap: StringMap = {
     0: "character",
     1: "mining",
     2: "smithing",
@@ -65,7 +66,7 @@ var skillIndexMap = {
     9: "worship"
 };
 
-var obolNameMap = {
+const obolNameMap: StringMap = {
     "ObolLocked1": "None",
     "ObolLocked2": "None",
     "ObolLocked3": "None",
@@ -170,7 +171,7 @@ var obolNameMap = {
 };
 
 // maps stored stamp ID to it's display name in game
-var stampIdToDisplayMap = {
+const stampIdToDisplayMap: StringMap = {
     0: "Sword_Stamp",
     1: "Heart_Stamp",
     2: "Mana_Stamp",
@@ -251,7 +252,7 @@ var stampIdToDisplayMap = {
 };
 
 // maps the star signs ID (index) with their in game name
-var starSignMap = {
+const starSignMap: StringMap = {
     999: "None",
     0: "The_Buff_Guy",
     1: "Flexo_Bendo",
@@ -289,7 +290,7 @@ var starSignMap = {
     33: "Chronus_Cosmos"
 }
 
-var fishingBaitMap = {
+const fishingBaitMap: StringMap = {
     0: "Fly",
     1: "Wormie",
     2: "Iron_Hook",
@@ -307,7 +308,7 @@ var fishingBaitMap = {
     14: "Fat_Albert"
 }
 
-var fishingLineMap = {
+const fishingLineMap: StringMap = {
     0: "Fishing_Twine",
     1: "Copper_Twine",
     2: "Silver_Twine",
@@ -326,7 +327,7 @@ var fishingLineMap = {
 }
 
 // this should probably change.. but it works...
-var cardSetMap = {
+const cardSetMap: StringMap = {
     "None": "None",
     "{%_EXP_if_below_Lv_50": "Blunder_Hills",
     "{%_All_Food_Effect": "Yum-Yum_Desert",
@@ -339,7 +340,7 @@ var cardSetMap = {
 }
 
 // maps_the_weird_naming_convention_of_each_large_bubble_to_its_display_name
-var largeBubbleMap = {
+const largeBubbleMap: StringMap = {
     "_11": "Call_Me_Bob",
     "_6": "Sploosh_Sploosh",
     "_3": "Wyoming_Blood",
