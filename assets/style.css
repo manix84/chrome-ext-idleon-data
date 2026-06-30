@@ -124,11 +124,13 @@ button.disabled {
 }
 
 .characters {
-  position: relative;
   list-style-type: none;
   margin: 0;
   padding: 0;
-  text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
 }
 
 .characters > li img {
@@ -136,13 +138,14 @@ button.disabled {
 }
 
 .characters > li {
-  display: inline;
-  margin: 5px;
+  display: inline-flex;
+  min-width: 20px;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
 }
 
 .characters .character-index {
-  top: -15px;
-  position: absolute;
   font-weight: bold;
 }
 

@@ -93,7 +93,7 @@ const fillAccountData = (account: IdleonAccount, characters: IdleonCharacter[], 
     const rawObolNames = fields.ObolEqO1;
 
     const obolNames = condenseRawArray(rawObolNames, obolNameMap);
-    const obolBonusMap = JSON.parse(fields.ObolEqMAPz1) as DynamicRecord;
+    const obolBonusMap = parseJsonField<DynamicRecord>(fields.ObolEqMAPz1);
     account.obols = formObolData(obolNames, obolBonusMap);
 
     // TaskZZ0 = Current milestone in uncompleted task
@@ -104,22 +104,22 @@ const fillAccountData = (account: IdleonAccount, characters: IdleonCharacter[], 
     // TaskZZ5 = current daily tasks
     const taskData = (templateData.account as IdleonAccount).tasks;
     // unlocked
-    const ZZ1 = JSON.parse(fields.TaskZZ1);
+    const ZZ1 = parseJsonField<DynamicValue[]>(fields.TaskZZ1);
     taskData.unlocked.world1 = ZZ1[0];
     taskData.unlocked.world2 = ZZ1[1];
     taskData.unlocked.world3 = ZZ1[2];
     // milestoneProgress
-    const ZZ0 = JSON.parse(fields.TaskZZ0);
+    const ZZ0 = parseJsonField<DynamicValue[]>(fields.TaskZZ0);
     taskData.milestoneProgress.world1 = ZZ0[0];
     taskData.milestoneProgress.world2 = ZZ0[1];
     taskData.milestoneProgress.world3 = ZZ0[2];
     // meritsOwned
-    const ZZ2 = JSON.parse(fields.TaskZZ2);
+    const ZZ2 = parseJsonField<DynamicValue[]>(fields.TaskZZ2);
     taskData.meritsOwned.world1 = ZZ2[0];
     taskData.meritsOwned.world2 = ZZ2[1];
     taskData.meritsOwned.world3 = ZZ2[2];
     // craftsUnlocked
-    const ZZ3 = JSON.parse(fields.TaskZZ3);
+    const ZZ3 = parseJsonField<DynamicValue[]>(fields.TaskZZ3);
     taskData.craftsUnlocked.world1 = ZZ3[0];
     taskData.craftsUnlocked.world2 = ZZ3[1];
     taskData.craftsUnlocked.world3 = ZZ3[2];
@@ -166,7 +166,7 @@ const fillAccountData = (account: IdleonAccount, characters: IdleonCharacter[], 
     account.highestItemCounts["Grass Leaf"] = findHighestInStorage(account.chest, "Grass Leaf");
 
     // cards
-    const rawCardsData = JSON.parse(fields.Cards0);
+    const rawCardsData = parseJsonField<DynamicRecord>(fields.Cards0);
     const cleanCardData: Record<string, CardData> = {};
     const cardKeys = Object.keys(rawCardsData);
     for (let i = 0; i < cardKeys.length; i++) {
@@ -206,19 +206,19 @@ const fillAccountData = (account: IdleonAccount, characters: IdleonCharacter[], 
     account.looty = lootyList;
 
     // purchases
-    const rawBundles = JSON.parse(fields.BundlesReceived) as DynamicRecord;
+    const rawBundles = parseJsonField<DynamicRecord>(fields.BundlesReceived);
     account.bundlesPurchased = parseIntMapFields(rawBundles, true);
 
     // anvil crafts unlocked
     // currently 0 = unlocked, -1 = locked. Might change to a better value
-    const rawAnvil = JSON.parse(fields.AnvilCraftStatus);
+    const rawAnvil = parseJsonField<DynamicValue[]>(fields.AnvilCraftStatus);
     account.anvilCraftsUnlocked.tab1 = rawAnvil[0];
     account.anvilCraftsUnlocked.tab2 = rawAnvil[1];
     account.anvilCraftsUnlocked.tab3 = rawAnvil[2];
 
     // cogs
-    const rawCogPositions = JSON.parse(getAnyFieldValue(fields.CogO));
-    const rawCogData = JSON.parse(getAnyFieldValue(fields.CogM));
+    const rawCogPositions = parseJsonField<DynamicRecord>(getAnyFieldValue(fields.CogO));
+    const rawCogData = parseJsonField<DynamicRecord>(getAnyFieldValue(fields.CogM));
     const cogs: UnknownRecord[] = [];
     Object.keys(rawCogPositions).forEach((cogName, i) => {
         cogs.push({
@@ -246,7 +246,7 @@ const createRefineryData = (fields: IdleonFields): UnknownRecord  => {
     // 6 = dioxide salt
     // 7 = red salt
     // 8 = red salt 2
-    const rawRefinery = JSON.parse(fields.Refinery);
+    const rawRefinery = parseJsonField<DynamicValue[]>(fields.Refinery);
     const refinery: UnknownRecord = {};
     refinery.salts = {};
 
@@ -273,7 +273,8 @@ const createRefineryData = (fields: IdleonFields): UnknownRecord  => {
 const fillCharacterData = (characters: IdleonCharacter[], normalizedCharacterData: NormalizedCharacterRawData[], fields: IdleonFields): IdleonCharacter[]  => {
     for (let i = 0; i < normalizedCharacterData.length; i++) {
         const characterRawData = normalizedCharacterData[i];
-        characters[i].class = classIndexMap[parseInt(getAnyFieldValue(getCharacterRawField(characterRawData, "CharacterClass")))];
+        const rawClassId = parseInt(getAnyFieldValue(getCharacterRawField(characterRawData, "CharacterClass")));
+        characters[i].class = classIndexMap[rawClassId] ?? String(rawClassId);
         characters[i].money = parseInt(getCharacterRawField(characterRawData, "Money"));
         characters[i].AFKtarget = getCharacterRawField(characterRawData, "AFKtarget");
         characters[i].currentMap = parseInt(getAnyFieldValue(getCharacterRawField(characterRawData, "CurrentMap")));
@@ -402,7 +403,7 @@ const fillCharacterData = (characters: IdleonCharacter[], normalizedCharacterDat
             mappedTalents[talentMap[parseInt(key)]] = unmappedTalents[key];
         }
         // regular talents
-        const talentPages = classTalentMap[characters[i].class];
+        const talentPages = classTalentMap[characters[i].class] ?? [];
         let orderedClassTalents: string[] = [];
         const indexedTalents: Record<string, CsvValue> = {};
         for (let j = 0; j < talentPages.length; j++) {
@@ -414,7 +415,7 @@ const fillCharacterData = (characters: IdleonCharacter[], normalizedCharacterDat
         }
         characters[i].talentLevels = indexedTalents;
         // star talents
-        const starTalentList = classTalentPageMap["Star Talents"];
+        const starTalentList = classTalentPageMap["Star Talents"] ?? [];
         const starTalentIndexed: CsvList = [];
         for (let j = 0; j < starTalentList.length; j++) {
             if (starTalentList[j] == "FILLER") {
@@ -459,7 +460,7 @@ const fillCharacterData = (characters: IdleonCharacter[], normalizedCharacterDat
         characters[i].fishingToolkitEquipped.line = fishingLineMap[parseInt(rawFishingToolkit[1])];
 
         // equipped bubbles
-        const charEquippedBubbles = JSON.parse(fields.CauldronBubbles)[i];
+        const charEquippedBubbles = parseJsonField<DynamicValue[]>(fields.CauldronBubbles)[i] ?? [];
         characters[i].bubblesEquipped = [
             mapLookup(largeBubbleMap, charEquippedBubbles[0]),
             mapLookup(largeBubbleMap, charEquippedBubbles[1])

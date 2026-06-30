@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Idleon-Api-Downloader",
-  "version": "0.5.8",
+  "version": "0.5.9",
   "description": "Download and copy Idleon save data for tools and spreadsheets.",
   "icons": {
     "16": "assets/icons/icon-16.png",

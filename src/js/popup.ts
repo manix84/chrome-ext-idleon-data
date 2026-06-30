@@ -78,8 +78,9 @@ const updateAllButtons = (): void  => {
       { id: "guildExportCsvCopyLink", data: guildExportCsvString },
     ];
 
-    const characters = document.querySelectorAll(".characters > li > button");
-    for (let i = 0; i < 9; i++) {
+    const characterCount = cleanJson?.characters.length ?? 9;
+    const characters = syncCharacterButtons(characterCount);
+    for (let i = 0; i < characterCount; i++) {
       const charData = parseAnyData(`characterCsv:${i}`, () => {
         return getCharacterCsv(cleanJson, i);
       }, cleanJson, parseFailures);
@@ -227,6 +228,41 @@ const setDownloadButtonState = (elementId: string, dataString: string | null, fi
     logInfo(`Download requested for ${elementId}.`, { fileName });
     showTooltip(e, "Downloaded!");
   };
+};
+
+const syncCharacterButtons = (characterCount: number): HTMLButtonElement[] => {
+  const list = document.querySelector(".characters");
+  if (!list) {
+    return [];
+  }
+
+  list.innerHTML = "";
+  const buttons: HTMLButtonElement[] = [];
+  for (let i = 0; i < characterCount; i++) {
+    const item = document.createElement("li");
+    const index = document.createElement("span");
+    const button = document.createElement("button");
+    const icon = document.createElement("img");
+
+    index.className = "character-index";
+    index.innerText = `#${i + 1}`;
+    button.id = `char${i}CopyLink`;
+    button.className = "icon-button";
+    button.type = "button";
+    button.setAttribute("aria-label", `Copy character ${i + 1} import column`);
+    button.setAttribute("title", `Copy character ${i + 1} import column`);
+    icon.className = "copy";
+    icon.src = "assets/copy.svg";
+    icon.alt = "copy";
+
+    button.appendChild(icon);
+    item.appendChild(index);
+    item.appendChild(button);
+    list.appendChild(item);
+    buttons.push(button);
+  }
+
+  return buttons;
 };
 
 const setStatus = (text: string): void  => {
