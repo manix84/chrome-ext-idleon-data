@@ -170,6 +170,8 @@ const fillAccountData = (account: IdleonAccount, characters: IdleonCharacter[], 
         const count = parseInt(rawCardsData[key]);
         cleanCardData[lookup] = {
             "collected": count,
+            "displayName": lookup,
+            "rawName": key,
             "starLevel": getStarLevelFromCard(key, count)
         };
     }
@@ -650,7 +652,14 @@ const condenseTwoRawArrays = (raw1: DynamicValue, raw2: DynamicValue, field1: st
         if (toInt2) {
             val2 = parseInt(val2);
         }
-        r.push({ [field1]: val1, [field2]: val2 });
+        const condensedItem: UnknownRecord = { [field1]: val1, [field2]: val2 };
+        if (map1 != null) {
+            condensedItem["raw" + capitalize(field1)] = element1;
+        }
+        if (map2 != null) {
+            condensedItem["raw" + capitalize(field2)] = element2;
+        }
+        r.push(condensedItem);
     }
     return r;
 };

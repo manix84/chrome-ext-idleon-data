@@ -107,12 +107,15 @@ interface GuildMember {
 
 interface CardData extends UnknownRecord {
   collected: number;
+  displayName: string;
+  rawName: string;
   starLevel: string;
 }
 
 interface EquippedItem extends UnknownRecord {
   count?: CsvValue;
   name?: CsvValue;
+  rawName?: CsvValue;
   stoneData?: UnknownRecord;
 }
 
