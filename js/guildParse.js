@@ -4,7 +4,7 @@ function guildExportCsv(cleanJson) {
     var separator = "\t";
     var r = "";
     for (var i = 0; i < memberInfo.length; i++) {
-        member = memberInfo[i];
+        var member = memberInfo[i];
         // TODO clean this mess up... it works tho
         r += member.accountId + separator + member.rank + separator + member.name + separator + member.class + separator + member.level + separator + member.wantedPerk + separator + member.guildPoints + "\n";
     }

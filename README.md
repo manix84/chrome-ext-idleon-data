@@ -25,6 +25,35 @@ The popup now also shows:
 2. Better error icons for parse failures
 3. A "Clear Cached Data" button to reset stale captures
 
+# Development
+
+This project does not need a build step. After changing extension files, run:
+
+```sh
+npm run validate
+```
+
+The validator checks the manifest, popup asset references, required popup control IDs, and JavaScript syntax for the files loaded by the extension.
+
+Before opening a pull request, run the same checks used by GitHub Actions:
+
+```sh
+npm test
+npm run lint
+npm run typecheck
+npm run validate
+```
+
+To create the release zip locally, run:
+
+```sh
+npm run build:release
+```
+
+# Privacy
+
+See [PRIVACY.md](PRIVACY.md) for what the extension captures, where it is stored, and which Chrome permissions are used.
+
 The best use of this extension is the ability to copy data that can be easily pasted into the Idleon Calculator import spreadsheet. Doing so will allow you to min/max each of your character and view information the game normally doesn't give you. The spreadsheet is very powerful!
 
 Upon viewing the JSON data, it might seem really messy in a text editor. That is because it is unformatted. Just paste the data into a JSON viewer such as http://jsonviewer.stack.hu/ and it makes viewing the data much easier.

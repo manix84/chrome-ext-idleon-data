@@ -4,7 +4,7 @@ s.onload = function () {
   this.remove();
 };
 (document.head || document.documentElement).appendChild(s);
-chrome.storage.local.set({ data: null });
+chrome.storage.local.set({ data: null, updatedAt: null });
 
 window.addEventListener(
   "PassSaveToInject",
@@ -50,12 +50,13 @@ function checkTempData() {
             charNameData: charNameData,
             guildInfo: guildInfo,
           };
-          chrome.storage.local.set({ data: combined, updatedAt: Date.now() });
-
-          // remove temp data
-          chrome.storage.local.set({ saveData: null });
-          chrome.storage.local.set({ charNameData: null });
-          chrome.storage.local.set({ guildInfo: null });
+          chrome.storage.local.set({
+            data: combined,
+            updatedAt: Date.now(),
+            saveData: null,
+            charNameData: null,
+            guildInfo: null,
+          });
         }
       });
     });

@@ -4,3 +4,6 @@ clean.js
 pretty.js
 Z.js
 injected_electron.js
+node_modules/
+dist/
+coverage/

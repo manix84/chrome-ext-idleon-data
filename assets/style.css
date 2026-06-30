@@ -79,7 +79,8 @@ header {
   margin: 10px 0;
 }
 
-.json > a {
+.json > a,
+.json > button {
   margin: 7px;
 }
 
@@ -93,7 +94,18 @@ header {
   cursor: pointer;
 }
 
-a.disabled {
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+a.disabled,
+button.disabled {
   opacity: 0.45;
   pointer-events: none;
 }

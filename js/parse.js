@@ -172,7 +172,7 @@ function fillAccountData(account, characters, fields) {
     // looty mc shooty raw display
     var lootyString = fields.Cards1;
     // remove all quotes and []
-    lootyString = lootyString.replace(/\"|\[|\]/g, "");
+    lootyString = lootyString.replace(/"|\[|\]/g, "");
     var lootyList = lootyString.split(",");
     account.looty = lootyList;
 

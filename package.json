@@ -1,0 +1,21 @@
+{
+  "name": "idleon-api-downloader",
+  "version": "0.3.0",
+  "private": true,
+  "description": "Chrome extension for downloading and copying Idleon save data.",
+  "type": "module",
+  "scripts": {
+    "build:release": "node scripts/build-release.mjs",
+    "lint": "eslint .",
+    "test": "node --test",
+    "typecheck": "tsc --noEmit",
+    "validate": "node tools/validate-extension.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.30.1",
+    "@types/node": "^24.0.10",
+    "eslint": "^9.30.1",
+    "globals": "^16.2.0",
+    "typescript": "^5.8.3"
+  }
+}

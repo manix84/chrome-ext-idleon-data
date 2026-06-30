@@ -9,11 +9,20 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
 });
 
 document.getElementById("clearDataBtn").addEventListener("click", function () {
-  chrome.storage.local.set({ data: null, updatedAt: null }, function () {
-    document.getElementById("content").style.display = "none";
-    document.getElementById("loader").style.display = "block";
-    setStatus("Cached data cleared.");
-  });
+  chrome.storage.local.set(
+    {
+      data: null,
+      updatedAt: null,
+      saveData: null,
+      charNameData: null,
+      guildInfo: null,
+    },
+    function () {
+      document.getElementById("content").style.display = "none";
+      document.getElementById("loader").style.display = "block";
+      setStatus("Cached data cleared.");
+    }
+  );
 });
 
 function updateAllButtons() {
@@ -42,7 +51,7 @@ function updateAllButtons() {
     const cleanJson = parseAnyData(parseData, rawJson);
     const cleanString = safeStringify(cleanJson);
     const lootyString = parseAnyData(function (data) {
-      return data.saveData.Cards1.replace(/\"/g, "\\");
+      return data.saveData.Cards1.replace(/"/g, "\\");
     }, rawJson);
     const questsString = parseAnyData(function (data) {
       return safeStringify(data.account.quests);
@@ -61,7 +70,7 @@ function updateAllButtons() {
       { id: "guildExportCsvCopyLink", data: guildExportCsvString },
     ];
 
-    const characters = document.querySelectorAll(".characters > li > a");
+    const characters = document.querySelectorAll(".characters > li > button");
     for (let i = 0; i < 9; i++) {
       const charData = parseAnyData(function () {
         return getCharacterCsv(cleanJson, i);
@@ -132,6 +141,8 @@ function setCopyButtonState(elementId, data) {
   const invalid =
     data === null || data === undefined || data === "null" || data === "";
   button.classList.toggle("disabled", invalid);
+  button.disabled = invalid;
+  button.setAttribute("aria-disabled", String(invalid));
 
   const icon = button.querySelector("img");
   if (icon) {
@@ -164,6 +175,7 @@ function setDownloadButtonState(elementId, dataString, fileName) {
     dataString === "null" ||
     dataString === "";
   downloadButton.classList.toggle("disabled", invalid);
+  downloadButton.setAttribute("aria-disabled", String(invalid));
 
   const icon = downloadButton.querySelector("img");
   if (icon) {
