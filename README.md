@@ -1,5 +1,10 @@
 # Idleon-Api-Downloader
 
+[![Lint](https://github.com/Corbeno/Idleon-Api-Downloader/actions/workflows/lint.yml/badge.svg)](https://github.com/Corbeno/Idleon-Api-Downloader/actions/workflows/lint.yml)
+[![Tests](https://github.com/Corbeno/Idleon-Api-Downloader/actions/workflows/test.yml/badge.svg)](https://github.com/Corbeno/Idleon-Api-Downloader/actions/workflows/test.yml)
+[![Type Check](https://github.com/Corbeno/Idleon-Api-Downloader/actions/workflows/typecheck.yml/badge.svg)](https://github.com/Corbeno/Idleon-Api-Downloader/actions/workflows/typecheck.yml)
+[![Release](https://github.com/Corbeno/Idleon-Api-Downloader/actions/workflows/release.yml/badge.svg)](https://github.com/Corbeno/Idleon-Api-Downloader/actions/workflows/release.yml)
+
 A Chrome extension that allows for the downloading of API data in JSON format sent to the browser when Idleon is loaded. Short are the days of manually inputting your character's data into a spreadsheet.
 
 The extension uses Manifest V3 and is now built from TypeScript source.
