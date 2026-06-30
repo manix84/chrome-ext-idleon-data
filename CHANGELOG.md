@@ -2,6 +2,13 @@
 
 Notable changes to this project are summarized here by released or package version.
 
+## [0.5.7] - 2026-06-30
+
+### Fixed
+
+- Added labeled popup parser errors so failed export paths identify the specific parser that failed in the console.
+- Made missing or malformed guild data fall back to empty guild bonuses and members instead of breaking the full clean-data parse.
+
 ## [0.5.6] - 2026-06-30
 
 ### Added
